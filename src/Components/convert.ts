@@ -33,64 +33,133 @@ const convert = (instruction: string) => {
     // Determine type of RISC-V instruction (I-type, R-type, S-type, etc)
     const determineType = (instruction:string, opcode:string) => {
 
-        let type:string = "";
+        /*
+            R-type = 1
+            I-type arithmetic = 2 
+            I-type Load = 3
+            I-type Jump = 4
+            S-type Store = 5
+            SB-type (branch instruct) = 6
+            U-type (Load Upper Immediate) = 7
+            U-type (AUPIC) = 8
+            J-type (JAL) = 9
+            Default = 10
+        */
+
+        let new_instruction:string = "";
 
         // Determine type using opcode
         switch (opcode) {
             case "00110011":
-                alert("R-type");
-                type = "0110011";
+                new_instruction = RType(instruction);
                 break;
 
             case "0010011":
-                alert("I-type arithmetic");
-                type = "0010011";
+                new_instruction = ITypeArithmetic(instruction);
                 break;
 
             case "0000011":
-                alert("I-type Load")
-                type = "0000011";
+                new_instruction = ITypeLoad(instruction)
                 break;
 
             case "1100111":
-                alert("I-type jump");
-                type = "1100111";
+                new_instruction = ITypeJump(instruction);
                 break;
 
             case "0100011":
-                alert("S-type store");
-                type = "0100011";
+                new_instruction = STypeStore(instruction);
                 break;
 
             case "1100011":
-                alert("SB-type (branch instruction)");
-                type = "1100011";
+                new_instruction = SBType(instruction);
                 break;
 
             case "0110111":
-                alert("U-type (Load Upper Immediate)");
-                type = "0110111";
+                new_instruction = UTypeLUI(instruction)
                 break;
 
             case "0010111":
-                alert("U-type (AUIPC)");
-                type = "0010111";
+                new_instruction = UTypeAUPIC(instruction);
                 break;
 
             case "1101111":
-                alert("J-type instruct (JAL)");
-                type = "1101111";
+                new_instruction = JType(instruction);
                 break;
 
             default:
-                alert("Error");
-                type = "";
                 break;
 
         }
+        return new_instruction;
+    }
 
-        return type;
-        
+    // R-type instructions
+    const RType = (instruction:string) => {
+        return instruction;
+    }
+    
+    // I-Type Arithmetic instruction
+    const ITypeArithmetic = (instruction:string) => {
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get rd
+        let getRD:number = new_num >> 7
+        getRD = getRD & 0xF;
+
+        // Get funct3
+        let getfunct3:number = new_num >> 12;
+        getfunct3 = getfunct3 & 0x7;
+
+        // Get rs1
+        let getrs1:number = new_num >> 15;
+        getrs1 = getrs1 & 0xF;
+
+        // Get immediate
+        let getimm:number = new_num >> 20;
+        getimm = getimm & 0xFFF;
+
+
+    
+        return instruction;
+    }
+
+
+    // I-Type Load instruction
+    const ITypeLoad = (instruction:string) => {
+        return instruction;
+
+    }
+
+    // I-Type Jump instruction
+    const ITypeJump = (instruction:string) => {
+        return instruction;
+    }
+
+    // S-type Store instruction
+    const STypeStore = (instruction:string) => {
+        return instruction;
+    }
+
+    // Branch instruction
+    const SBType = (instruction:string) => {
+        return instruction;
+    }
+
+    // U-Type Load Upper Immediate (LUI)
+    const UTypeLUI = (instruction:string) => {
+        return instruction;
+    }
+
+    // U-type Add Upper Immediate to PC
+    const UTypeAUPIC = (instruction:string) => {
+        return instruction;
+    }
+
+    // Jump and Link instruction
+    const JType = (instruction:string) => {
+        return instruction;
     }
 
     // Input is in binary, 
@@ -101,6 +170,7 @@ const convert = (instruction: string) => {
         result = convertToBinary(instruction);
         opcode = determineOpcode(instruction);
         instructionType = determineType(instruction, opcode);
+        result = instructionType;
     } else {
         result = "Invalid input, try entering another number";
     }

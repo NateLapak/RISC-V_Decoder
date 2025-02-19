@@ -23,12 +23,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 
-const callsToAction = [
-
-
-  { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-  { name: 'Contact sales', href: '#', icon: PhoneIcon },
-]
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -54,15 +48,10 @@ const Header = () => {
         </div>
         <PopoverGroup className="header-a hidden lg:flex lg:gap-x-12">
 
-          <a href="#" className="header-a text-sm/6 font-semibold text-gray-900">
-            Features
-          </a>
-          <a href="#" className="header-a text-sm/6 font-semibold text-gray-900">
-            Marketplace
-          </a>
-          <a href="#" className="header-a text-sm/6 font-semibold text-gray-900">
-            Company
-          </a>
+          {/* <a href="#" className="header-a text-sm/6 font-semibold text-gray-900">
+            RISC-V Instruction Decoder
+          </a> */}
+
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
 
@@ -74,11 +63,6 @@ const Header = () => {
           <div className="flex items-center justify-between">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
-              <img
-                alt=""
-                src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
             </a>
             <button
               type="button"
