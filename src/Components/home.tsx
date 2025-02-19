@@ -49,8 +49,8 @@ const Home = () => {
                  {/* ✅ Display the result below the form */}
                  {result && (
                     <div className="mt-4 p-4 bg-gray-100 border rounded">
-                        <h3 className="text-lg text-gray-800">Hexadecimal or Binary number: {instruction} </h3>
-                        <h3 className="text-lg text-gray-800">RISC-V Instruction: {result}</h3>
+                        <h3 className="text-lg text-gray-800"><b>Hexadecimal or Binary number:</b> {instruction} </h3>
+                        <h3 className="text-lg text-gray-800"><b>RISC-V Instruction:</b> {result}</h3>
                     </div>
                 )}
 
