@@ -9,7 +9,6 @@ const Homepage = () => {
     return (
         <div>
             <Header/>
-            <hr></hr>
             <Home />
             <Footer />
         </div>

@@ -1,3 +1,6 @@
+import determineInstruct from "./determineInstruct";
+import determineRegister from "./determineRegister";
+
 const convert = (instruction: string) => {
 
     // Instruction is not a valid hex or binary number, return Invalid
@@ -51,39 +54,39 @@ const convert = (instruction: string) => {
         // Determine type using opcode
         switch (opcode) {
             case "00110011":
-                new_instruction = RType(instruction);
+                new_instruction = RType(instruction, 1);
                 break;
 
             case "0010011":
-                new_instruction = ITypeArithmetic(instruction);
+                new_instruction = ITypeArithmetic(instruction, 2);
                 break;
 
             case "0000011":
-                new_instruction = ITypeLoad(instruction)
+                new_instruction = ITypeLoad(instruction, 3)
                 break;
 
             case "1100111":
-                new_instruction = ITypeJump(instruction);
+                new_instruction = ITypeJump(instruction, 4);
                 break;
 
             case "0100011":
-                new_instruction = STypeStore(instruction);
+                new_instruction = STypeStore(instruction, 5);
                 break;
 
             case "1100011":
-                new_instruction = SBType(instruction);
+                new_instruction = SBType(instruction, 6);
                 break;
 
             case "0110111":
-                new_instruction = UTypeLUI(instruction)
+                new_instruction = UTypeLUI(instruction, 7);
                 break;
 
             case "0010111":
-                new_instruction = UTypeAUPIC(instruction);
+                new_instruction = UTypeAUPIC(instruction, 8);
                 break;
 
             case "1101111":
-                new_instruction = JType(instruction);
+                new_instruction = JType(instruction, 9);
                 break;
 
             default:
@@ -94,12 +97,12 @@ const convert = (instruction: string) => {
     }
 
     // R-type instructions
-    const RType = (instruction:string) => {
+    const RType = (instruction:string, type:number) => {
         return instruction;
     }
     
     // I-Type Arithmetic instruction
-    const ITypeArithmetic = (instruction:string) => {
+    const ITypeArithmetic = (instruction:string, type:number) => {
 
         let new_num = +instruction;
         let temp: string = "";
@@ -120,45 +123,50 @@ const convert = (instruction: string) => {
         let getimm:number = new_num >> 20;
         getimm = getimm & 0xFFF;
 
+        let rd:string = determineRegister(getRD);
+        let translatedInstruction:string = determineInstruct(getfunct3, type);
+        let rs1:string = determineRegister(getrs1);
+        let imm:string = getimm.toString();
 
-    
-        return instruction;
+
+        temp = translatedInstruction + " " + rd + ", " + rs1 + ", " + imm;
+        return temp;
     }
 
 
     // I-Type Load instruction
-    const ITypeLoad = (instruction:string) => {
+    const ITypeLoad = (instruction:string, type:number) => {
         return instruction;
 
     }
 
     // I-Type Jump instruction
-    const ITypeJump = (instruction:string) => {
+    const ITypeJump = (instruction:string, type:number) => {
         return instruction;
     }
 
     // S-type Store instruction
-    const STypeStore = (instruction:string) => {
+    const STypeStore = (instruction:string, type:number) => {
         return instruction;
     }
 
     // Branch instruction
-    const SBType = (instruction:string) => {
+    const SBType = (instruction:string, type:number) => {
         return instruction;
     }
 
     // U-Type Load Upper Immediate (LUI)
-    const UTypeLUI = (instruction:string) => {
+    const UTypeLUI = (instruction:string, type:number) => {
         return instruction;
     }
 
     // U-type Add Upper Immediate to PC
-    const UTypeAUPIC = (instruction:string) => {
+    const UTypeAUPIC = (instruction:string, type:number) => {
         return instruction;
     }
 
     // Jump and Link instruction
-    const JType = (instruction:string) => {
+    const JType = (instruction:string, type:number) => {
         return instruction;
     }
 

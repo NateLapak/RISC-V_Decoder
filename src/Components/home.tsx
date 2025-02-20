@@ -26,33 +26,55 @@ const Home = () => {
                 <form className="home-form w-full max-w-lg" onSubmit={handleSubmit}>
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
-                            <label className="mb-6 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                            <label className="mb-6 block uppercase tracking-wide text-[#ADD9F4] text-xs font-bold mb-2">
                                 Enter a binary (0b) or hexadecimal number (0x):
                             </label>
                             <input
                                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                 id="instruction"
                                 type="text"
-                                placeholder="0b1010 or 0x00128293"
+                                placeholder="0b10101010 or 0x00128293"
                                 value={instruction}
                                 onChange={handleChange}
                             />
-                            <p className="text-gray-600 text-xs italic">Works only for 32-bit RISC-V Assembly</p>
+                            <p className="text-[#476C9B] text-xs italic">Works only for 32-bit RISC-V Assembly</p>
                         </div>
                     </div>
 
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 px-4 rounded">
                         Convert
                     </button>
                 </form>
 
                  {/* ✅ Display the result below the form */}
                  {result && (
-                    <div className="mt-4 p-4 bg-gray-100 border rounded">
-                        <h3 className="text-lg text-gray-800"><b>Hexadecimal or Binary number:</b> {instruction} </h3>
-                        <h3 className="text-lg text-gray-800"><b>RISC-V Instruction:</b> {result}</h3>
+                    <div className="mt-4 p-4 bg-[#476C9B] border-[#476C9B] rounded">
+                        <h3 className="text-lg text-[#101419]"><b>Hexadecimal or Binary number:</b> {instruction} </h3>
+                        <h3 className="text-lg text-[#101419]"><b>RISC-V Instruction:</b> {result}</h3>
                     </div>
                 )}
+
+                <h4>Examples in Hexadecimal and Binary</h4>
+                <p>
+                    0x00128293 --- addi t0, t0, 1
+                    <br/>
+                    0x41de0f33 --- sub t5, t3, t4
+                    <br/>
+                    0x008ea023 --- sw s0, 0(t4)
+                    <br/>
+                    0x000007ef --- jal a5, 0(t2)
+                    <br/>
+                    <br/>
+                    0b00000000010010100010111000000011 --- lw t3, 4(s4)
+                    <br/>
+                    0b00000000000111110111001010110011 --- and t0, t5, ra
+                    <br/>
+                    0b00000000100011110000010001100111 --- jalr s0, 8(t5)
+                    <br/>
+                    0b00000001111000101101011001100011 --- bge t0, t5, 12(a2)
+
+                
+                </p>
 
                 <h4>RISC-V Background</h4>
                 <p>
