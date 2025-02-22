@@ -112,6 +112,28 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
     }
 
+    const STypeInstruction = () => {
+
+        switch (funct3) {
+
+            case 0b000:
+                RISCV_Instruction = "sb";
+                break;
+
+            case 0b001:
+                RISCV_Instruction = "sh";
+                break;
+
+            case 0b010:
+                RISCV_Instruction = "sw";
+                break;
+
+            default:
+                break;
+        }
+        return RISCV_Instruction;
+    }
+
 
     // Determine instruction type
     switch (instructType) {
@@ -136,6 +158,7 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
         // S-type Store
         case 5:
+            STypeInstruction();
             break;
         
         // SB-type

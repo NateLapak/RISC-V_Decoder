@@ -177,7 +177,36 @@ const convert = (instruction: string) => {
 
     // S-type Store instruction
     const STypeStore = (instruction:string, type:number) => {
-        return instruction;
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get imm[4:0]
+        let firstimm:number = (new_num >> 7) & 0x1F;
+
+        // Get funct3
+        let getfunct3:number = (new_num >> 12)  & 0x7;
+
+        // Get rs1
+        let getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
+
+        // Get rs2
+        let getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
+        
+        // Get imm[11:5]
+        let secondimm: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
+        
+        // Combine immediate
+        let combinedImm: number = (secondimm << 5) | firstimm;
+
+        // Get register name and instruction
+        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        let rs1:string = determineRegister(getrs1);
+        let rs2:string = determineRegister(getrs2);
+        
+        
+        temp = translatedInstruction + " " + rs2 + ", " + combinedImm + "(" + rs1 + ")";
+        return temp;
     }
 
     // Branch instruction

@@ -89,7 +89,7 @@ const Home = () => {
                     Encoder
                 </button> */}
 
-                <h4>RISC-V Background</h4>
+                <h4 className="mb-4">RISC-V Background</h4>
                 <p>
                     RISC-V is an instruction set architecture (ISA) developed at the University of California, Berkeley. Compared to other ISAs like x86 or ARM, RISC-V is open-source and excellent
                     <br />
