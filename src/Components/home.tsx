@@ -18,7 +18,7 @@ const Home = () => {
     };
 
     return (
-        <div className="container-fluid col-lg-10 col-md-10 col-sm-10 col-xs-10 h-screen">
+        <div className="container-fluid">
             <div className="homepage">
                 <h2>RISC-V Instruction Decoder</h2>
                 <p>Convert a number in binary or hexadecimal to its RISC-V assembly instruction.</p>
@@ -54,8 +54,9 @@ const Home = () => {
                     </div>
                 )}
 
-                <h4>Examples in Hexadecimal and Binary</h4>
+                <h4>Examples in Hexadecimal and Binary. </h4>
                 <p>
+                    <br/>
                     0x00128293 --- addi t0, t0, 1
                     <br/>
                     0x41de0f33 --- sub t5, t3, t4
@@ -72,9 +73,21 @@ const Home = () => {
                     0b00000000100011110000010001100111 --- jalr s0, 8(t5)
                     <br/>
                     0b00000001111000101101011001100011 --- bge t0, t5, 12(a2)
-
-                
                 </p>
+
+                <h6 className="text-xl">Here are some of the examples translated into Python for reference</h6>
+                <p>
+                    addi t0, t0, 1 --- t0 = t0 + 1
+                    <br/>
+                    sub t5, t3, t4 --- t5 = t3 - t4
+                    <br/>
+                    and t0, t5, ra --- t0 = t5 & ra
+                </p>
+                
+                {/* <p>Click here if you want to translate a RISC-V Instruction into it's Hexadecimal or Binary number</p>
+                <button type="submit" className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 px-4 rounded">
+                    Encoder
+                </button> */}
 
                 <h4>RISC-V Background</h4>
                 <p>
@@ -82,7 +95,7 @@ const Home = () => {
                     <br />
                     for an introductory course in computer architecture. This website was made to help decode the binary representation of RISC-V instructions, help other
                     <br />
-                    university students gain a better understanding of RISC-V assembly, and as a fun personal project I made during reading week.
+                    university students gain a better understanding of RISC-V assembly, and as a fun personal project I started during reading week.
                     <br />
                     <br />
                     For more information, visit the official RISC-V GitHub page or the University of California, Berkeley project description.

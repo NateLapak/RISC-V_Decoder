@@ -3,9 +3,68 @@
     its RISC-V instruction
 */
 
-const determineInstruct = (funct3:number, instructType:number) => {
+const determineInstruct = (funct3:number, instructType:number, funct7:number ) => {
 
     let RISCV_Instruction:string = "";
+
+    const RTypeInstruction = () => {
+
+        switch (funct3) {
+
+            case 0b000:
+                if (funct7 == 0) {
+                    RISCV_Instruction = "add";
+                }
+
+                else {
+                    RISCV_Instruction = "sub";
+                }
+
+                break;
+
+            case 0b001:
+                RISCV_Instruction = "Sll";
+                break;
+
+            case 0b010:
+                RISCV_Instruction = "Slt";
+                break;
+
+            case 0b011:
+                RISCV_Instruction = "Sltu";
+                break;
+
+            case 0b100:
+                RISCV_Instruction = "Xor";
+                break;
+
+            // Need to differentiate srli and srai
+            case 0b101:
+                if (funct7 == 0) {
+                    RISCV_Instruction = "Srl";
+                }
+
+                else {
+                    RISCV_Instruction = "sra";
+                }
+                break;
+
+            case 0b110:
+                RISCV_Instruction = "Or";
+                break;
+
+            case 0b111:
+                RISCV_Instruction = "and";
+                break;
+
+            default:
+                break;
+
+        }
+    
+        return RISCV_Instruction;
+
+    }
 
     const ITypeArith = () => {
         
@@ -59,7 +118,7 @@ const determineInstruct = (funct3:number, instructType:number) => {
 
         // R-Type instruction
         case 1:
- 
+            RTypeInstruction();
             break;
 
         // I-type arithmetic

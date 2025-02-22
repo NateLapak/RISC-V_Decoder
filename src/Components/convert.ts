@@ -12,10 +12,10 @@ const convert = (instruction: string) => {
     let instructionType:string = "";
 
     // If instruction was given in hexadecimal, convert to binary
-    const convertToBinary = (instruction: string) => {
+    const convertToHex = (instruction: string) => {
 
-        let binary_num: number = +instruction;
-        return binary_num.toString(2);
+        let hex_num: number = +instruction;
+        return hex_num.toString(16);
     }
 
     // Determine type of RISC-V instruction.
@@ -53,7 +53,7 @@ const convert = (instruction: string) => {
 
         // Determine type using opcode
         switch (opcode) {
-            case "00110011":
+            case "0110011":
                 new_instruction = RType(instruction, 1);
                 break;
 
@@ -98,7 +98,37 @@ const convert = (instruction: string) => {
 
     // R-type instructions
     const RType = (instruction:string, type:number) => {
-        return instruction;
+        
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get rd
+        let getRD: number = (new_num >> 7) & 0x1F; // 0x1F = 0b11111
+
+        // Get funct3
+        let getfunct3: number = (new_num >> 12) & 0x7; // 0x7 = 0b111
+
+        // Get rs1
+        let getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
+
+        // Get rs2
+        let getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
+
+        // Get funct7
+        let getfunct7: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
+
+        // Get register name and instruction
+        let rd:string = determineRegister(getRD);
+        let translatedInstruction:string = determineInstruct(getfunct3, type, getfunct7);
+        let rs1:string = determineRegister(getrs1);
+        let rs2:string = determineRegister(getrs2);
+
+
+        temp = translatedInstruction + " " + rd + ", " + rs1 + ", " + rs2;
+        return temp;
+
+
     }
     
     // I-Type Arithmetic instruction
@@ -109,7 +139,7 @@ const convert = (instruction: string) => {
 
         // Get rd
         let getRD:number = new_num >> 7
-        getRD = getRD & 0xF;
+        getRD = getRD & 0x1F;
 
         // Get funct3
         let getfunct3:number = new_num >> 12;
@@ -117,14 +147,14 @@ const convert = (instruction: string) => {
 
         // Get rs1
         let getrs1:number = new_num >> 15;
-        getrs1 = getrs1 & 0xF;
+        getrs1 = getrs1 & 0x1F;
 
         // Get immediate
         let getimm:number = new_num >> 20;
         getimm = getimm & 0xFFF;
 
         let rd:string = determineRegister(getRD);
-        let translatedInstruction:string = determineInstruct(getfunct3, type);
+        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
         let rs1:string = determineRegister(getrs1);
         let imm:string = getimm.toString();
 
@@ -172,10 +202,10 @@ const convert = (instruction: string) => {
 
     // Input is in binary, 
     if (instruction.startsWith("0b")) {
+        instruction = convertToHex(instruction);
         opcode = determineOpcode(instruction);
         instructionType = determineType(instruction, opcode);
     } else if (instruction.startsWith("0x")) {
-        result = convertToBinary(instruction);
         opcode = determineOpcode(instruction);
         instructionType = determineType(instruction, opcode);
         result = instructionType;
