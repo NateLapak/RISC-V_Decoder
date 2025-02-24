@@ -108,6 +108,38 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
         }
 
+    }
+
+
+    // Determine instructions for I-type load instructions by determining their funct3
+    const ITypeLoadInstruction = () => {
+
+        switch (funct3) {
+
+            case 0b000:
+                RISCV_Instruction = "lb";
+                break;
+
+            case 0b001:
+                RISCV_Instruction = "lh";
+                break;
+
+            case 0b010:
+                RISCV_Instruction = "lw";
+                break;
+
+            case 0b100:
+                RISCV_Instruction = "lbu";
+                break;
+
+            case 0b101:
+                RISCV_Instruction = "lhu";
+                break;
+
+            default:
+                break;
+
+        }
         return RISCV_Instruction;
 
     }
@@ -150,6 +182,7 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
         // I-type Load
         case 3:
+            ITypeLoadInstruction();
             break;
     
         // I-type Jump

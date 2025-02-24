@@ -2,6 +2,7 @@
 import { useState } from "react";
 import convert from "./convert";
 
+
 const Home = () => {
     const [instruction, setInstruction] = useState("");
     const [result, setResult] = useState(""); 
@@ -22,7 +23,6 @@ const Home = () => {
             <div className="homepage">
                 <h2>RISC-V Instruction Decoder</h2>
                 <p>Convert a number in binary or hexadecimal to its RISC-V assembly instruction.</p>
-                
                 <form className="home-form w-full max-w-lg" onSubmit={handleSubmit}>
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
@@ -63,7 +63,7 @@ const Home = () => {
                     <br/>
                     0x008ea023 --- sw s0, 0(t4)
                     <br/>
-                    0x000007ef --- jal a5, 0(t2)
+                    0x00c007ef --- jal a5, 12
                     <br/>
                     <br/>
                     0b00000000010010100010111000000011 --- lw t3, 4(s4)

@@ -15,7 +15,7 @@ const convert = (instruction: string) => {
     const convertToHex = (instruction: string) => {
 
         let hex_num: number = +instruction;
-        return hex_num.toString(16);
+        return hex_num.toString(16).padStart(8, '0');
     }
 
     // Determine type of RISC-V instruction.
@@ -50,6 +50,8 @@ const convert = (instruction: string) => {
         */
 
         let new_instruction:string = "";
+
+
 
         // Determine type using opcode
         switch (opcode) {
@@ -166,7 +168,34 @@ const convert = (instruction: string) => {
 
     // I-Type Load instruction
     const ITypeLoad = (instruction:string, type:number) => {
-        return instruction;
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get rd
+        let getRD:number = new_num >> 7
+        getRD = getRD & 0x1F;
+
+        // Get funct3
+        let getfunct3:number = new_num >> 12;
+        getfunct3 = getfunct3 & 0x7;
+
+        // Get rs1
+        let getrs1:number = new_num >> 15;
+        getrs1 = getrs1 & 0x1F;
+
+        // Get immediate
+        let getimm:number = new_num >> 20;
+        getimm = getimm & 0xFFF;
+
+        let rd:string = determineRegister(getRD);
+        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        let rs1:string = determineRegister(getrs1);
+        let imm:string = getimm.toString();
+
+
+        temp = translatedInstruction + " " + rd + ", " + imm + "(" + rs1 + ")";
+        return temp;
 
     }
 
@@ -226,20 +255,53 @@ const convert = (instruction: string) => {
 
     // Jump and Link instruction
     const JType = (instruction:string, type:number) => {
-        return instruction;
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get rd
+        let getRD:number = new_num >> 7
+        getRD = getRD & 0x1F;
+
+        // Extract immediate
+        let imm: number = 0;
+
+        // imm[20] (bit 31 of the instruction)
+        imm |= (new_num >> 31) & 0x1;
+
+        // imm[10:1] (bits 21 to 30 of the instruction)
+        imm |= ((new_num >> 21) & 0x3FF) << 1;
+
+        // imm[11] (bit 20 of the instruction)
+        imm |= ((new_num >> 20) & 0x1) << 11;
+
+        // imm[19:12] (bits 12 to 19 of the instruction)
+        imm |= ((new_num >> 12) & 0xFF) << 12;
+
+        // Sign extension (need to fix negative numbers)
+        if (imm & (1 << 20)) {
+            imm |= ~((1 << 21) - 1);
+        }
+
+        let rd:string = determineRegister(getRD);
+
+        temp = "jal " + rd + ", " + imm;
+        return temp;
+
     }
 
     // Input is in binary, 
     if (instruction.startsWith("0b")) {
-        instruction = convertToHex(instruction);
+        instruction = "0x" + convertToHex(instruction);
         opcode = determineOpcode(instruction);
         instructionType = determineType(instruction, opcode);
+        result = instructionType;
     } else if (instruction.startsWith("0x")) {
         opcode = determineOpcode(instruction);
         instructionType = determineType(instruction, opcode);
         result = instructionType;
     } else {
-        result = "Invalid input, try entering another number";
+        result = "Invalid input, make sure to put the prefix 0b (binary) or 0x (hexadecimal)";
     }
 
     return result;
