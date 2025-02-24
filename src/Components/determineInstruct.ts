@@ -110,6 +110,12 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
     }
 
+    // Jalr is the only instruction for IType jump instructions
+    const jalrInstruction = () => {
+        RISCV_Instruction = "jalr";
+        return RISCV_Instruction;
+    }
+
 
     // Determine instructions for I-type load instructions by determining their funct3
     const ITypeLoadInstruction = () => {
@@ -187,6 +193,7 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
     
         // I-type Jump
         case 4:
+            jalrInstruction();
             break;
 
         // S-type Store

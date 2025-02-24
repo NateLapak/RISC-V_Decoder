@@ -1,6 +1,8 @@
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 
+// This file handles the functionalitny and logic for converting a binary or hexadecimal number into 
+// it's RISC-V instruction
 const convert = (instruction: string) => {
 
     // Instruction is not a valid hex or binary number, return Invalid
@@ -13,7 +15,6 @@ const convert = (instruction: string) => {
 
     // If instruction was given in hexadecimal, convert to binary
     const convertToHex = (instruction: string) => {
-
         let hex_num: number = +instruction;
         return hex_num.toString(16).padStart(8, '0');
     }
@@ -201,7 +202,33 @@ const convert = (instruction: string) => {
 
     // I-Type Jump instruction
     const ITypeJump = (instruction:string, type:number) => {
-        return instruction;
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get rd
+        let getRD:number = new_num >> 7
+        getRD = getRD & 0x1F;
+
+        // Get funct3
+        let getfunct3:number = new_num >> 12;
+        getfunct3 = getfunct3 & 0x7;
+
+        // Get rs1
+        let getrs1:number = new_num >> 15;
+        getrs1 = getrs1 & 0x1F;
+
+        // Get immediate
+        let getimm:number = new_num >> 20;
+        getimm = getimm & 0xFFF;
+
+        let rd:string = determineRegister(getRD);
+        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        let rs1:string = determineRegister(getrs1);
+        let imm:string = getimm.toString();
+
+        temp = translatedInstruction + " " + rd + ", " + imm + "(" + rs1 + ")";
+        return temp;
     }
 
     // S-type Store instruction
