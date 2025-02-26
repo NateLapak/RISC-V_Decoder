@@ -5,13 +5,11 @@ import determineRegister from "./determineRegister";
 // it's RISC-V instruction
 const convert = (instruction: string) => {
 
-    // Instruction is not a valid hex or binary number, return Invalid
-    if (!instruction) return "Invalid input";
-
     let result:string = "";
 
     let opcode:string = "";
-    let instructionType:string = "";
+    let RISCV_Instruction:string = "";
+    let instructionType: string = "";
 
     // If instruction was given in hexadecimal, convert to binary
     const convertToHex = (instruction: string) => {
@@ -58,38 +56,47 @@ const convert = (instruction: string) => {
         switch (opcode) {
             case "0110011":
                 new_instruction = RType(instruction, 1);
+                instructionType = "R-Type";
                 break;
 
             case "0010011":
                 new_instruction = ITypeArithmetic(instruction, 2);
+                instructionType = "I-Type"
                 break;
 
             case "0000011":
                 new_instruction = ITypeLoad(instruction, 3)
+                instructionType = "I-Type"
                 break;
 
             case "1100111":
                 new_instruction = ITypeJump(instruction, 4);
+                instructionType = "I-Type"
                 break;
 
             case "0100011":
                 new_instruction = STypeStore(instruction, 5);
+                instructionType = "S-Type"
                 break;
 
             case "1100011":
                 new_instruction = SBType(instruction, 6);
+                instructionType = "SB-Type"
                 break;
 
             case "0110111":
                 new_instruction = UTypeLUI(instruction, 7);
+                instructionType = "U-Type"
                 break;
 
             case "0010111":
                 new_instruction = UTypeAUPIC(instruction, 8);
+                instructionType = "U-Type"
                 break;
 
             case "1101111":
                 new_instruction = JType(instruction, 9);
+                instructionType = "UJ-Type"
                 break;
 
             default:
@@ -267,7 +274,36 @@ const convert = (instruction: string) => {
 
     // Branch instruction
     const SBType = (instruction:string, type:number) => {
-        return instruction;
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get imm[4:0]
+        let firstimm:number = (new_num >> 7) & 0x1F;
+
+        // Get funct3
+        let getfunct3:number = (new_num >> 12)  & 0x7;
+
+        // Get rs1
+        let getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
+
+        // Get rs2
+        let getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
+        
+        // Get imm[11:5]
+        let secondimm: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
+        
+        // Combine immediate
+        let combinedImm: number = (secondimm << 5) | firstimm;
+
+        // Get register name and instruction
+        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        let rs1:string = determineRegister(getrs1);
+        let rs2:string = determineRegister(getrs2);
+        
+        
+        temp = translatedInstruction + " " + rs1 + ", " + rs2 + ", " + combinedImm;
+        return temp;
     }
 
     // U-Type Load Upper Immediate (LUI)
@@ -321,17 +357,17 @@ const convert = (instruction: string) => {
     if (instruction.startsWith("0b")) {
         instruction = "0x" + convertToHex(instruction);
         opcode = determineOpcode(instruction);
-        instructionType = determineType(instruction, opcode);
-        result = instructionType;
+        RISCV_Instruction = determineType(instruction, opcode);
+        result = RISCV_Instruction;
     } else if (instruction.startsWith("0x")) {
         opcode = determineOpcode(instruction);
-        instructionType = determineType(instruction, opcode);
-        result = instructionType;
+        RISCV_Instruction = determineType(instruction, opcode);
+        result = RISCV_Instruction;
     } else {
         result = "Invalid input, make sure to put the prefix 0b (binary) or 0x (hexadecimal)";
     }
 
-    return result;
+    return [result, instructionType];
 }
 
 export default convert

@@ -172,6 +172,41 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
         return RISCV_Instruction;
     }
 
+    const branchInstructions = () => {
+        
+        switch (funct3) {
+
+            case 0b000:
+                RISCV_Instruction = "beq";
+                break;
+
+            case 0b001:
+                RISCV_Instruction = "bne";
+                break;
+
+            case 0b100:
+                RISCV_Instruction = "blt";
+                break;
+
+            case 0b101:
+                RISCV_Instruction = "bge";
+                break;
+
+            case 0b110:
+                RISCV_Instruction = "bltu";
+                break;
+
+            case 0b111:
+                RISCV_Instruction = "bgeu";
+                break;
+
+            default:
+                break;
+
+        }
+        return RISCV_Instruction;
+    }
+
 
     // Determine instruction type
     switch (instructType) {
@@ -203,6 +238,7 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
         
         // SB-type
         case 6:
+            branchInstructions();
             break;
 
         // U-type

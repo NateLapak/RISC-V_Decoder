@@ -5,7 +5,8 @@ import convert from "./convert";
 
 const Home = () => {
     const [instruction, setInstruction] = useState("");
-    const [result, setResult] = useState(""); 
+    const [instructionType, setInstructionType] = useState("");
+    const [result, setResult] = useState("");
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInstruction(event.target.value);
@@ -14,7 +15,10 @@ const Home = () => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Prevent page reload
         const output = convert(instruction); // Convert instruction
-        setResult(output); // Store the result
+        let result:string = output[0];
+        let type:string = output[1];
+        setResult(result); // Store the result
+        setInstructionType(type);
 
     };
 
@@ -47,9 +51,10 @@ const Home = () => {
                 </form>
 
                  {/* ✅ Display the result below the form */}
-                 {result && (
+                 {result &&  (
                     <div className="mt-4 p-4 bg-[#476C9B] border-[#476C9B] rounded">
                         <h3 className="text-lg text-[#101419]"><b>Hexadecimal or Binary number:</b> {instruction} </h3>
+                        <h3 className="text-lg text-[#101419]"><b>Instruction Type:</b> {instructionType}</h3>
                         <h3 className="text-lg text-[#101419]"><b>RISC-V Instruction:</b> {result}</h3>
                     </div>
                 )}
