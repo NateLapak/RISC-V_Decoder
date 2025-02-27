@@ -23,10 +23,10 @@ const Home = () => {
     };
 
     return (
-        <div className="container-fluid">
-            <div className="homepage">
+        <div className="container-fluid py-4">
+            <div className="homepage my-8">
                 <h2>RISC-V Instruction Decoder</h2>
-                <p>Convert a number in binary or hexadecimal to its RISC-V assembly instruction.</p>
+                <p>Convert a number in binary or hexadecimal to its 32-bit RISC-V assembly instruction.</p>
                 <form className="home-form w-full max-w-lg" onSubmit={handleSubmit}>
                     <div className="flex flex-wrap -mx-3 mb-6">
                         <div className="w-full px-3">
@@ -59,7 +59,7 @@ const Home = () => {
                     </div>
                 )}
 
-                <h4>Examples in Hexadecimal and Binary. </h4>
+                <h4>Examples of I/O in Hexadecimal and Binary. </h4>
                 <p>
                     <br/>
                     0x00128293 --- addi t0, t0, 1
@@ -70,6 +70,8 @@ const Home = () => {
                     <br/>
                     0x00c007ef --- jal a5, 12
                     <br/>
+                    0x0c44ea37 --- lui s4, 50254
+                    <br/>
                     <br/>
                     0b00000000010010100010111000000011 --- lw t3, 4(s4)
                     <br/>
@@ -78,6 +80,8 @@ const Home = () => {
                     0b00000000100011110000010001100111 --- jalr s0, 8(t5)
                     <br/>
                     0b00000001111000101101011001100011 --- bge t0, t5, 12(a2)
+                    <br/>
+                    0b00000101010101000100101110010111 --- auipc x23, 21828
                 </p>
 
                 <h6 className="text-xl">Here are some of the examples translated into Python for reference</h6>

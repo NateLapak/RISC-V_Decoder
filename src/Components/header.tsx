@@ -27,9 +27,9 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="bg-[#101419] text-xl py-4 px-8 text-white">
-      RISC-V Instruction converter
-      <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+    <header className="bg-black text-xl py-6 px-8 text-white">
+      [    32-bit RISC-V Instruction Converter    ]
+      <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between lg:px-8">
         <div className="flex lg:flex-1">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
