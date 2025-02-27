@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
-import convert from "./convert";
+import {convert, encode} from "./convert"
 
 
 const Home = () => {
     const [instruction, setInstruction] = useState("");
     const [instructionType, setInstructionType] = useState("");
     const [result, setResult] = useState("");
+    const [mode, setMode] = useState("decode"); // New: "decode" or "encode" mode
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInstruction(event.target.value);
@@ -14,48 +15,81 @@ const Home = () => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Prevent page reload
-        const output = convert(instruction); // Convert instruction
-        let result:string = output[0];
-        let type:string = output[1];
-        setResult(result); // Store the result
-        setInstructionType(type);
+        if (mode === "decode") {
+            const output = convert(instruction); // Decode instruction
+            setResult(output[0]);
+            setInstructionType(output[1]);
+        } else if (mode === "encode") {
+            const output = encode(instruction); // Encode RISC-V assembly
+            setResult(output);
+            setInstructionType("");
+        }
 
     };
 
     return (
         <div className="container-fluid py-4">
             <div className="homepage my-8">
-                <h2>RISC-V Instruction Decoder</h2>
-                <p>Convert a number in binary or hexadecimal to its 32-bit RISC-V assembly instruction.</p>
-                <form className="home-form w-full max-w-lg" onSubmit={handleSubmit}>
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                        <div className="w-full px-3">
-                            <label className="mb-6 block uppercase tracking-wide text-[#ADD9F4] text-xs font-bold mb-2">
-                                Enter a binary (0b) or hexadecimal number (0x):
-                            </label>
-                            <input
-                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="instruction"
-                                type="text"
-                                placeholder="0b10101010 or 0x00128293"
-                                value={instruction}
-                                onChange={handleChange}
-                            />
-                            <p className="text-[#476C9B] text-xs italic">Works only for 32-bit RISC-V Assembly</p>
+                <h2>RISC-V Instruction {mode === "decode" ? "Decoder" : "Encoder"}</h2>
+                <p>
+                    {mode === "decode" 
+                    ? "Convert a number in binary or hexadecimal to its 32-bit RISC-V assembly instruction" 
+                    : "Convert a 32-bit RISC-V assembly instruction into it's hexadecimal representation"}
+                </p>
+                <div>
+                    <form className="home-form w-full max-w-lg" onSubmit={handleSubmit}>
+                        <div className="flex flex-wrap -mx-3 mb-6">
+                            <div className="w-full px-3">
+                                <label className="mb-6 block uppercase tracking-wide text-[#ADD9F4] text-xs font-bold mb-2">
+                                    {mode === "decode" 
+                                    ? "Enter a binary (0b) or hexadecimal number (0x):" 
+                                    : "Enter a 32-bit RISC-V Assembly Instruction:"}
+                                </label>
+                                <input
+                                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    type="text"
+                                    placeholder={mode === "decode" 
+                                        ? "0b10101010 or 0x00128293" 
+                                        : "e.g., addi t0, t0, 1"}
+                                    value={instruction}
+                                    onChange={handleChange}
+                                />
+                                <p className="text-[#476C9B] text-xs italic">
+                                    {mode === "decode" 
+                                        ? "Works only for 32-bit RISC-V Assembly" 
+                                        : "Convert RISC-V Assembly to Hexadecimal"}
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit" className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 px-4 rounded">
-                        Convert
-                    </button>
-                </form>
+                        <button type="submit" className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 px-4 mx-8 rounded">
+                            Convert
+                        </button>
+
+                        <button className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 my-6 px-4 rounded mb-4 mx-8"
+                            onClick={() => setMode(mode === "decode" ? "encode" : "decode")}>
+                            Switch to {mode === "decode" ? "Encoder" : "Decoder"}
+                        </button>
+                        
+                    </form>
+                </div>
 
                  {/* ✅ Display the result below the form */}
                  {result &&  (
                     <div className="mt-4 p-4 bg-[#476C9B] border-[#476C9B] rounded">
-                        <h3 className="text-lg text-[#101419]"><b>Hexadecimal or Binary number:</b> {instruction} </h3>
-                        <h3 className="text-lg text-[#101419]"><b>Instruction Type:</b> {instructionType}</h3>
-                        <h3 className="text-lg text-[#101419]"><b>RISC-V Instruction:</b> {result}</h3>
+                        
+                    {mode === "decode" ? (
+                        <>
+                            <h3 className="text-lg text-[#101419]"><b>Hexadecimal or Binary number:</b> {instruction} </h3>
+                            <h3 className="text-lg text-[#101419]"><b>Instruction Type:</b> {instructionType}</h3>
+                            <h3 className="text-lg text-[#101419]"><b>RISC-V Instruction:</b> {result}</h3>
+                        </>
+                    ) : (
+                        <>
+                            <h3 className="text-lg text-[#101419]"><b>RISC-V Instruction:</b> {instruction}</h3>
+                            <h3 className="text-lg text-[#101419]"><b>Encoded Hexadecimal:</b> {result}</h3>
+                        </>
+                    )}
                     </div>
                 )}
 

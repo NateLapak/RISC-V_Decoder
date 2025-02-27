@@ -3,7 +3,7 @@ import determineRegister from "./determineRegister";
 
 // This file handles the functionalitny and logic for converting a binary or hexadecimal number into 
 // it's RISC-V instruction
-const convert = (instruction: string) => {
+export const convert = (instruction: string) => {
 
     let result:string = "";
 
@@ -370,4 +370,8 @@ const convert = (instruction: string) => {
     return [result, instructionType];
 }
 
-export default convert
+export const encode = (assembly: string) => {
+    // New encoding logic
+    let encodedHex = ""; // Implement your encoding logic here
+    return assembly;
+}
