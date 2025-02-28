@@ -308,12 +308,65 @@ export const convert = (instruction: string) => {
 
     // U-Type Load Upper Immediate (LUI)
     const UTypeLUI = (instruction:string, type:number) => {
-        return instruction;
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get rd
+        let getRD:number = new_num >> 7
+        getRD = getRD & 0x1F;
+
+        // Get immediate
+        let imm: number = 0;
+
+        // imm[20] (bit 31 of the instruction)
+        imm |= (new_num >> 31) & 0x1;
+    
+        // imm[10:1] (bits 21 to 30 of the instruction)
+        imm |= ((new_num >> 21) & 0x3FF) << 1;
+    
+        // imm[11] (bit 20 of the instruction)
+        imm |= ((new_num >> 20) & 0x1) << 11;
+    
+        // imm[19:12] (bits 12 to 19 of the instruction)
+        imm |= ((new_num >> 12) & 0xFF) << 12;
+    
+
+        let rd:string = determineRegister(getRD);
+
+        temp = "lui " + rd + ", " + imm;
+        return temp;
     }
 
     // U-type Add Upper Immediate to PC
     const UTypeAUPIC = (instruction:string, type:number) => {
-        return instruction;
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+        // Get rd
+        let getRD:number = new_num >> 7
+        getRD = getRD & 0x1F;
+
+        // Get immediate
+        let imm: number = 0;
+
+        // imm[20] (bit 31 of the instruction)
+        imm |= (new_num >> 31) & 0x1;
+    
+        // imm[10:1] (bits 21 to 30 of the instruction)
+        imm |= ((new_num >> 21) & 0x3FF) << 1;
+    
+        // imm[11] (bit 20 of the instruction)
+        imm |= ((new_num >> 20) & 0x1) << 11;
+    
+        // imm[19:12] (bits 12 to 19 of the instruction)
+        imm |= ((new_num >> 12) & 0xFF) << 12;
+    
+        let rd:string = determineRegister(getRD);
+
+        temp = "auipc " + rd + ", " + imm;
+        return temp;
     }
 
     // Jump and Link instruction
@@ -359,17 +412,29 @@ export const convert = (instruction: string) => {
         opcode = determineOpcode(instruction);
         RISCV_Instruction = determineType(instruction, opcode);
         result = RISCV_Instruction;
-    } else if (instruction.startsWith("0x")) {
+    } 
+    
+    // Input is in hexadecimal
+    else if (instruction.startsWith("0x")) {
         opcode = determineOpcode(instruction);
         RISCV_Instruction = determineType(instruction, opcode);
         result = RISCV_Instruction;
-    } else {
+    } 
+    
+    // Input is empty
+    else if (!instruction) {
+        return ["", ""]
+    } 
+    
+    // Input is formatted incorrectly
+    else {
         result = "Invalid input, make sure to put the prefix 0b (binary) or 0x (hexadecimal)";
     }
-
     return [result, instructionType];
 }
 
+
+// Logic to convert a 32-bit RISC-V Instruction into it's encoded hexadecimal number
 export const encode = (assembly: string) => {
     // New encoding logic
     let encodedHex = ""; // Implement your encoding logic here

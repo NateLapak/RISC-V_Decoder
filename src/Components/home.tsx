@@ -5,7 +5,7 @@ import {convert, encode} from "./convert"
 
 const Home = () => {
     const [instruction, setInstruction] = useState("");
-    const [instructionType, setInstructionType] = useState("");
+    const [instructionType, setInstructionType] = useState("None");
     const [result, setResult] = useState("");
     const [mode, setMode] = useState("decode"); // New: "decode" or "encode" mode
 
@@ -115,7 +115,7 @@ const Home = () => {
                     <br/>
                     0b00000001111000101101011001100011 --- bge t0, t5, 12(a2)
                     <br/>
-                    0b00000101010101000100101110010111 --- auipc x23, 21828
+                    0b00000101010101000100101110010111 --- auipc s7, 21828
                 </p>
 
                 <h6 className="text-xl">Here are some of the examples translated into Python for reference</h6>
