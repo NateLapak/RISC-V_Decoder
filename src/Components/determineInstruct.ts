@@ -1,14 +1,16 @@
 /*
     This file takes the funct3 of an instruction and it's instruction type to determine
-    its RISC-V instruction
+    its RISC-V instruction.
 */
 
 const determineInstruct = (funct3:number, instructType:number, funct7:number ) => {
 
     let RISCV_Instruction:string = "";
 
+    // R-type instructions
     const RTypeInstruction = () => {
 
+        // Determien instruction using funct3
         switch (funct3) {
 
             case 0b000:
@@ -66,6 +68,7 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
     }
 
+    // I-Type arithemtic instruction
     const ITypeArith = () => {
         
         switch (funct3) {

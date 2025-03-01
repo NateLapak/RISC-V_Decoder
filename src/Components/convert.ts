@@ -1,8 +1,16 @@
+/*
+    Convert.ts: 
+    Handles the logic for encoding and decoding RISC-V instructions and hexadecimal number.
+    The function convert(instruction) coverts binary or hex to assembly
+    The function encode(instruction) converts assembly to hex
+    Written by Nathan Lapak
+*/
+
+import { sign } from "crypto";
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 
-// This file handles the functionalitny and logic for converting a binary or hexadecimal number into 
-// it's RISC-V instruction
+// This function handles the functionalitny and logic for converting a binary or hexadecimal number into it's RISC-V instruction
 export const convert = (instruction: string) => {
 
     let result:string = "";
@@ -50,55 +58,64 @@ export const convert = (instruction: string) => {
 
         let new_instruction:string = "";
 
-
-
         // Determine type using opcode
         switch (opcode) {
+
+            // R-type opcode
             case "0110011":
                 new_instruction = RType(instruction, 1);
                 instructionType = "R-Type";
                 break;
 
+            // I-type arithmetic opcode
             case "0010011":
                 new_instruction = ITypeArithmetic(instruction, 2);
                 instructionType = "I-Type"
                 break;
 
+            // I-type Load opcode
             case "0000011":
                 new_instruction = ITypeLoad(instruction, 3)
                 instructionType = "I-Type"
                 break;
 
+            // I-type Jump opcode
             case "1100111":
                 new_instruction = ITypeJump(instruction, 4);
                 instructionType = "I-Type"
                 break;
 
+            // S-type opcode
             case "0100011":
                 new_instruction = STypeStore(instruction, 5);
                 instructionType = "S-Type"
                 break;
 
+            // SB-type opcode
             case "1100011":
                 new_instruction = SBType(instruction, 6);
                 instructionType = "SB-Type"
                 break;
 
+            // U-type lui opcode
             case "0110111":
                 new_instruction = UTypeLUI(instruction, 7);
                 instructionType = "U-Type"
                 break;
 
+            // U-type (AUPIC) opcode
             case "0010111":
                 new_instruction = UTypeAUPIC(instruction, 8);
                 instructionType = "U-Type"
                 break;
 
+            // J-type opcode
             case "1101111":
                 new_instruction = JType(instruction, 9);
                 instructionType = "UJ-Type"
                 break;
 
+            // Invalid opcode
             default:
                 break;
 
@@ -109,7 +126,6 @@ export const convert = (instruction: string) => {
     // R-type instructions
     const RType = (instruction:string, type:number) => {
         
-
         let new_num = +instruction;
         let temp: string = "";
 
@@ -159,10 +175,17 @@ export const convert = (instruction: string) => {
         let getrs1:number = new_num >> 15;
         getrs1 = getrs1 & 0x1F;
 
-        // Get immediate
+        // Get sign bit of immediate
+        let signbit:number = (new_num >> 31) & 1;
+
         let getimm:number = new_num >> 20;
         getimm = getimm & 0xFFF;
 
+        // Handle negative values
+        if (signbit === 1) {
+            getimm = getimm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        }
+        
         let rd:string = determineRegister(getRD);
         let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
         let rs1:string = determineRegister(getrs1);
@@ -192,9 +215,17 @@ export const convert = (instruction: string) => {
         let getrs1:number = new_num >> 15;
         getrs1 = getrs1 & 0x1F;
 
+        // Get sign bit of immediate
+        let signbit:number = (new_num >> 31) & 1;
+
         // Get immediate
         let getimm:number = new_num >> 20;
         getimm = getimm & 0xFFF;
+
+        // Handle negative values
+        if (signbit === 1) {
+            getimm = getimm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        }
 
         let rd:string = determineRegister(getRD);
         let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
@@ -225,9 +256,17 @@ export const convert = (instruction: string) => {
         let getrs1:number = new_num >> 15;
         getrs1 = getrs1 & 0x1F;
 
+        // Get sign bit of immediate
+        let signbit:number = (new_num >> 31) & 1;
+
         // Get immediate
         let getimm:number = new_num >> 20;
         getimm = getimm & 0xFFF;
+        
+        // Handle negative values
+        if (signbit === 1) {
+            getimm = getimm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        }
 
         let rd:string = determineRegister(getRD);
         let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
@@ -251,22 +290,29 @@ export const convert = (instruction: string) => {
         let getfunct3:number = (new_num >> 12)  & 0x7;
 
         // Get rs1
-        let getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
+        let getrs1: number = (new_num >> 15) & 0x1F; 
 
         // Get rs2
-        let getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
+        let getrs2: number = (new_num >> 20) & 0x1F; 
         
         // Get imm[11:5]
-        let secondimm: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
+        let secondimm: number = (new_num >> 25) & 0x7F; 
         
         // Combine immediate
         let combinedImm: number = (secondimm << 5) | firstimm;
+
+        // Get sign bit of immediate
+        let signbit:number = (new_num >> 31) & 1;
+
+        // Handle negative values
+        if (signbit === 1) {
+            combinedImm = combinedImm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        }
 
         // Get register name and instruction
         let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
         let rs1:string = determineRegister(getrs1);
         let rs2:string = determineRegister(getrs2);
-        
         
         temp = translatedInstruction + " " + rs2 + ", " + combinedImm + "(" + rs1 + ")";
         return temp;
@@ -296,6 +342,15 @@ export const convert = (instruction: string) => {
         // Combine immediate
         let combinedImm: number = (secondimm << 5) | firstimm;
 
+        // Get sign bit of immediate
+        let signbit:number = (new_num >> 31) & 1;
+
+        // Handle negative values
+        if (signbit === 1) {
+            combinedImm = combinedImm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        }
+        
+
         // Get register name and instruction
         let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
         let rs1:string = determineRegister(getrs1);
@@ -316,21 +371,16 @@ export const convert = (instruction: string) => {
         let getRD:number = new_num >> 7
         getRD = getRD & 0x1F;
 
-        // Get immediate
-        let imm: number = 0;
+        let imm: number = (new_num >> 12) & 0xFFFFF
 
-        // imm[20] (bit 31 of the instruction)
-        imm |= (new_num >> 31) & 0x1;
-    
-        // imm[10:1] (bits 21 to 30 of the instruction)
-        imm |= ((new_num >> 21) & 0x3FF) << 1;
-    
-        // imm[11] (bit 20 of the instruction)
-        imm |= ((new_num >> 20) & 0x1) << 11;
-    
-        // imm[19:12] (bits 12 to 19 of the instruction)
-        imm |= ((new_num >> 12) & 0xFF) << 12;
-    
+        // Get sign bit of immediate
+        let signbit:number = (new_num >> 31) & 1;
+
+        // Handle negative values
+        if (signbit === 1) {
+            imm = imm | ~0xFFFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        }
+        
 
         let rd:string = determineRegister(getRD);
 
@@ -348,21 +398,16 @@ export const convert = (instruction: string) => {
         let getRD:number = new_num >> 7
         getRD = getRD & 0x1F;
 
-        // Get immediate
-        let imm: number = 0;
+        let imm: number = (new_num >> 12) & 0xFFFFF
 
-        // imm[20] (bit 31 of the instruction)
-        imm |= (new_num >> 31) & 0x1;
-    
-        // imm[10:1] (bits 21 to 30 of the instruction)
-        imm |= ((new_num >> 21) & 0x3FF) << 1;
-    
-        // imm[11] (bit 20 of the instruction)
-        imm |= ((new_num >> 20) & 0x1) << 11;
-    
-        // imm[19:12] (bits 12 to 19 of the instruction)
-        imm |= ((new_num >> 12) & 0xFF) << 12;
-    
+        // Get sign bit of immediate
+        let signbit:number = (new_num >> 31) & 1;
+
+        // Handle negative values
+        if (signbit === 1) {
+            imm = imm | ~0xFFFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        }
+                
         let rd:string = determineRegister(getRD);
 
         temp = "auipc " + rd + ", " + imm;
@@ -379,29 +424,22 @@ export const convert = (instruction: string) => {
         let getRD:number = new_num >> 7
         getRD = getRD & 0x1F;
 
-        // Extract immediate
-        let imm: number = 0;
+        // Extract UJ-type immediate
+        let signbit = (new_num >> 31) & 1;        // Bit 20 (Sign Bit)
+        let imm2 = (new_num >> 21) & 0x3FF;  // Bits 10-1
+        let imm3 = (new_num >> 20) & 0x1;      // Bit 11
+        let imm4 = (new_num >> 12) & 0xFF;  // Bits 19-12
 
-        // imm[20] (bit 31 of the instruction)
-        imm |= (new_num >> 31) & 0x1;
+        // Assemble the full 21-bit immediate
+        let combinedImm: number = (signbit << 20) | (imm2 << 12) | (imm3 << 11) | (imm4 << 1);
 
-        // imm[10:1] (bits 21 to 30 of the instruction)
-        imm |= ((new_num >> 21) & 0x3FF) << 1;
-
-        // imm[11] (bit 20 of the instruction)
-        imm |= ((new_num >> 20) & 0x1) << 11;
-
-        // imm[19:12] (bits 12 to 19 of the instruction)
-        imm |= ((new_num >> 12) & 0xFF) << 12;
-
-        // Sign extension (need to fix negative numbers)
-        if (imm & (1 << 20)) {
-            imm |= ~((1 << 21) - 1);
+        // Sign-extend 21-bit immediate
+        if (signbit === 1) {
+            combinedImm = combinedImm | ~0x1FFFFF;  // Sign-extend 21-bit immediate
         }
 
         let rd:string = determineRegister(getRD);
-
-        temp = "jal " + rd + ", " + imm;
+        temp = "jal " + rd + ", " + combinedImm;
         return temp;
 
     }
@@ -430,6 +468,8 @@ export const convert = (instruction: string) => {
     else {
         result = "Invalid input, make sure to put the prefix 0b (binary) or 0x (hexadecimal)";
     }
+
+    // Return converted instruction along with its instruction type
     return [result, instructionType];
 }
 
