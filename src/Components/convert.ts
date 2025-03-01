@@ -6,9 +6,9 @@
     Written by Nathan Lapak
 */
 
-import { sign } from "crypto";
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
+import findInstruction from "./findInstruction";
 
 // This function handles the functionalitny and logic for converting a binary or hexadecimal number into it's RISC-V instruction
 export const convert = (instruction: string) => {
@@ -99,19 +99,19 @@ export const convert = (instruction: string) => {
 
             // U-type lui opcode
             case "0110111":
-                new_instruction = UTypeLUI(instruction, 7);
+                new_instruction = UTypeLUI(instruction);
                 instructionType = "U-Type"
                 break;
 
             // U-type (AUPIC) opcode
             case "0010111":
-                new_instruction = UTypeAUPIC(instruction, 8);
+                new_instruction = UTypeAUPIC(instruction);
                 instructionType = "U-Type"
                 break;
 
             // J-type opcode
             case "1101111":
-                new_instruction = JType(instruction, 9);
+                new_instruction = JType(instruction);
                 instructionType = "UJ-Type"
                 break;
 
@@ -362,7 +362,7 @@ export const convert = (instruction: string) => {
     }
 
     // U-Type Load Upper Immediate (LUI)
-    const UTypeLUI = (instruction:string, type:number) => {
+    const UTypeLUI = (instruction:string) => {
 
         let new_num = +instruction;
         let temp: string = "";
@@ -389,7 +389,7 @@ export const convert = (instruction: string) => {
     }
 
     // U-type Add Upper Immediate to PC
-    const UTypeAUPIC = (instruction:string, type:number) => {
+    const UTypeAUPIC = (instruction:string) => {
 
         let new_num = +instruction;
         let temp: string = "";
@@ -415,7 +415,7 @@ export const convert = (instruction: string) => {
     }
 
     // Jump and Link instruction
-    const JType = (instruction:string, type:number) => {
+    const JType = (instruction:string) => {
 
         let new_num = +instruction;
         let temp: string = "";
@@ -476,7 +476,14 @@ export const convert = (instruction: string) => {
 
 // Logic to convert a 32-bit RISC-V Instruction into it's encoded hexadecimal number
 export const encode = (assembly: string) => {
-    // New encoding logic
-    let encodedHex = ""; // Implement your encoding logic here
+    
+    let splitInstruction: string[] = assembly.split(" ");
+    
+    let getValues = findInstruction(assembly);
+
+    
+
+    
+
     return assembly;
 }
