@@ -73,6 +73,57 @@ const findInstruction = (mnemonic:string) => {
             instructionType = "I";
             break;
 
+        case "slli":
+            opcode = 0b0010011;
+            funct3 = 0b001;
+            instructionType = "I";
+            funct7 = 0;
+            break;
+
+        case "slti":
+            opcode = 0b0010011;
+            funct3 = 0b010;
+            instructionType = "I";
+            break;
+
+        case "sltiu":
+            opcode = 0b0010011;
+            funct3 = 0b011;
+            instructionType = "I";
+            break;
+
+        case "xori":
+            opcode = 0b0010011;
+            funct3 = 0b100;
+            instructionType = "I";
+            break;
+    
+        case "srli":
+            opcode = 0b0010011;
+            funct3 = 0b101;
+            instructionType = "I";
+            funct7 = 0
+            break;
+    
+        case "srai":
+            opcode = 0b0010011;
+            funct3 = 0b101;
+            instructionType = "I";
+            funct7 = 0b0100000;
+            break;
+
+        case "ori":
+            opcode = 0b0010011;
+            funct3 = 0b110;
+            instructionType = "I";
+            break;
+
+        case "andi":
+            opcode = 0b0010011;
+            funct3 = 0b111;
+            instructionType = "I";
+            break;
+
     }
 
     return [opcode, funct3, funct7, instructionType];

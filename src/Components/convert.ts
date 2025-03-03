@@ -477,13 +477,30 @@ export const convert = (instruction: string) => {
 // Logic to convert a 32-bit RISC-V Instruction into it's encoded hexadecimal number
 export const encode = (assembly: string) => {
     
+    const RTypes = () => {
+
+    }
+
+    const ITypes = () => {
+
+    }
+    
     let splitInstruction: string[] = assembly.split(" ");
-    
-    let getValues = findInstruction(assembly);
 
     
+    let getValues = findInstruction(splitInstruction[0]);
 
-    
+    switch (getValues[3]) {
+
+        case "R":
+            RTypes();
+            break
+
+        case "I":
+            ITypes();
+            break;
+    }
+   
 
     return assembly;
 }
