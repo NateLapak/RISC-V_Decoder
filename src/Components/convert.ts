@@ -486,9 +486,8 @@ export const encode = (assembly: string) => {
     }
     
     let splitInstruction: string[] = assembly.split(" ");
-
-    
     let getValues = findInstruction(splitInstruction[0]);
+    let encodedHex:number = 0;
 
     switch (getValues[3]) {
 
@@ -499,8 +498,12 @@ export const encode = (assembly: string) => {
         case "I":
             ITypes();
             break;
+
+        default:
+            return "Invalid RISC-V instruction"
+
     }
    
 
-    return assembly;
+    return encodedHex.toString();
 }

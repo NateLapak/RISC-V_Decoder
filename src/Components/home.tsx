@@ -50,7 +50,7 @@ const Home = () => {
                                     type="text"
                                     placeholder={mode === "decode" 
                                         ? "0b10101010 or 0x00128293" 
-                                        : "e.g., addi t0, t0, 1"}
+                                        : "e.g., addi t0, t2, 1"}
                                     value={instruction}
                                     onChange={handleChange}
                                 />

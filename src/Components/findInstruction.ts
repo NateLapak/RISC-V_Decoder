@@ -6,11 +6,11 @@
 const findInstruction = (mnemonic:string) => {
 
     let opcode:number = 0
-    let funct3:number = 0
+    let funct3 = null;
     let funct7 = null;
     let instructionType:string = "";
 
-    // Determine opcode, funct3 and funct7 of mnemonic (just a bunch of if statments :/)
+    // Determine opcode, funct3 and funct7 of mnemonic (just a bunch of if statments :( ))
     switch (mnemonic) {
 
         case "lb":
@@ -123,6 +123,63 @@ const findInstruction = (mnemonic:string) => {
             funct3 = 0b111;
             instructionType = "I";
             break;
+
+        case "auipc":
+            opcode = 0b0010111
+            funct3 = null
+            instructionType = "U";
+            break;
+
+        case "addiw":
+            opcode = 0b0011011
+            funct3 = 0
+            instructionType = "I";
+            break;
+
+        case "slliw":
+            opcode = 0b0011011
+            funct3 = 0b001
+            funct7 = 0
+            instructionType = "I"
+            break
+
+        case "srliw":
+            opcode = 0b0011011
+            funct3 = 0b101
+            funct7 = 0
+            instructionType = "I"
+            break
+
+        case "sraiw":
+            opcode = 0b0011011
+            funct3 = 0b101
+            funct7 = 0b0100000
+            instructionType = "R"
+            break
+
+        case "sb":
+            opcode = 0b0100011
+            funct3 = 0
+            instructionType = "S"
+            break
+
+        case "sh":
+            opcode = 0b0100011
+            funct3 = 0b001
+            instructionType = "S"
+            break
+
+        case "sw":
+            opcode = 0b0100011
+            funct3 = 0b010
+            instructionType = "S"
+            break
+
+        case "sd":
+            opcode = 0b0100011
+            funct3 = 0b011
+            instructionType = "I"
+            break
 
     }
 
