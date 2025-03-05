@@ -15,7 +15,8 @@ Here is the algorithm I used to convert a binary or hex number to its RISC-V Ins
 
 
 ## Algorithm to encode instruction
-    
+Here is the algorithm I used to convert a RISC-V instruction into its hexadecimal number
+
     1. Extract RISC-V Instruction inputted by user
     2. Split user input into 3 parts: The mnemonic, the registers, and the immediate (if applicable)
     2. Using the instruction's mnemonic, determine its opcode, funct3 and funct7.
