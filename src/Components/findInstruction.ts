@@ -181,6 +181,119 @@ const findInstruction = (mnemonic:string) => {
             instructionType = "I"
             break
 
+        case "add":
+            opcode = 0b0110011  
+            funct3 = 0
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "sub":
+            opcode = 0b0110011  
+            funct3 = 0
+            funct7 = 0b0100000
+            instructionType = "R"
+            break
+
+        case "sll":
+            opcode = 0b0110011  
+            funct3 = 0b001
+            funct7 = 0
+            instructionType = "R"
+            break
+        
+        case "slt":
+            opcode = 0b0110011  
+            funct3 = 0b010
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "sltu":
+            opcode = 0b0110011  
+            funct3 = 0b011
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "xor":
+            opcode = 0b0110011  
+            funct3 = 0b100
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "srl":
+            opcode = 0b0110011  
+            funct3 = 0b101
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "sra":
+            opcode = 0b0110011  
+            funct3 = 0b101
+            funct7 = 0b0100000
+            instructionType = "R"
+            break
+
+        case "or":
+            opcode = 0b0110011  
+            funct3 = 0b110
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "and":
+            opcode = 0b0110011  
+            funct3 = 0b111
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "lui":
+            opcode = 0b0110111  
+            instructionType = "U"
+            break
+
+        case "addw":
+            opcode = 0b0111011
+            funct3 = 0
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "subw":
+            opcode = 0b0111011
+            funct3 = 0
+            funct7 = 0b0100000
+            instructionType = "R"
+            break
+
+        case "sllw":
+            opcode = 0b0111011
+            funct3 = 0b001
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "srlw":
+            opcode = 0b0111011
+            funct3 = 0b101
+            funct7 = 0
+            instructionType = "R"
+            break
+
+        case "sraw":
+            opcode = 0b0111011
+            funct3 = 0b101
+            funct7 = 0b0100000
+            instructionType = "R"
+            break
+
+
+
+
     }
 
     return [opcode, funct3, funct7, instructionType];
