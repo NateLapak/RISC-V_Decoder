@@ -11,6 +11,7 @@ const findInstruction = (mnemonic:string) => {
     let instructionType:string = "";
 
     // Determine opcode, funct3 and funct7 of mnemonic (just a bunch of if statments :( ))
+    // Idk if this is optimal
     switch (mnemonic) {
 
         case "lb":
@@ -291,8 +292,52 @@ const findInstruction = (mnemonic:string) => {
             instructionType = "R"
             break
 
+        case "beq":
+            opcode = 0b1100011
+            funct3 = 0
+            instructionType = "SB"
+            break
 
+        case "bne":
+            opcode = 0b1100011
+            funct3 = 0b001
+            instructionType = "SB"
+            break
 
+        case "blt":
+            opcode = 0b1100011
+            funct3 = 0b100
+            instructionType = "SB"
+            break
+
+        case "bge":
+            opcode = 0b1100011
+            funct3 = 0b101
+            instructionType = "SB"
+            break
+
+        case "bltu":
+            opcode = 0b1100011
+            funct3 = 0b110
+            instructionType = "SB"
+            break
+
+        case "bgeu":
+            opcode = 0b1100011
+            funct3 = 0b111
+            instructionType = "SB"
+            break
+
+        case "jalr":
+            opcode = 0b1100111
+            funct3 = 0
+            instructionType = "I"
+            break
+
+        case "jal":
+            opcode = 0b1101111
+            instructionType = "UJ"
+            break
 
     }
 

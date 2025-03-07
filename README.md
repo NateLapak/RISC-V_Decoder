@@ -27,9 +27,13 @@ Here is the algorithm I used to convert a RISC-V instruction into its hexadecima
     7. Return resulting hexadecimal number and output it to user
 
 ## Tech stack
-Here is a list of programming languages and technolgies used
+List of programming languages and technolgies used
+    - HTML/CSS
+    - Typescript 
+    - NextJS 
+    - TailwindCSS
 
-
+I decided to use Typescript to make translating assembly instructions type consistent
 
 ## Deploy on Vercel
 
