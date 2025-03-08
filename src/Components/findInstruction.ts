@@ -339,10 +339,63 @@ const findInstruction = (mnemonic:string) => {
             instructionType = "UJ"
             break
 
+        case "ecall":
+            opcode = 0b1110011
+            funct3 = 0
+            funct7 = 0
+            instructionType = "I"
+            break
+
+        case "ebreak":
+            opcode = 0b1110011
+            funct3 = 0
+            funct7 = 0b000000000001
+            instructionType = "I"
+            break
+
+        case "csrrw":
+            opcode = 0b1110011
+            funct3 = 0b001
+            instructionType = "I"
+            break
+
+        case "csrrs":
+            opcode = 0b1110011
+            funct3 = 0b010
+            instructionType = "I"
+            break
+
+        case "csrrc":
+            opcode = 0b1110011
+            funct3 = 0b011
+            instructionType = "I"
+            break
+
+        case "csrrwi":
+            opcode = 0b1110011
+            funct3 = 0b101
+            instructionType = "I"
+            break
+
+        case "csrrsi":
+            opcode = 0b1110011
+            funct3 = 0b110
+            instructionType = "I"
+            break
+
+        case "csrrsi":
+            opcode = 0b1110011
+            funct3 = 0b111
+            instructionType = "I"
+            break
+
+        default:
+            opcode = 0
+            instructionType = "None"
+            break
     }
 
     return [opcode, funct3, funct7, instructionType];
-
 
 }
 
