@@ -29,6 +29,7 @@ Here is the algorithm I used to convert a RISC-V instruction into its hexadecima
 
 ## Tech stack
 List of programming languages and technolgies used
+
     - HTML/CSS
     - Typescript 
     - NextJS 
