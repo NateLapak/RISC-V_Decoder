@@ -9,6 +9,7 @@
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 import findInstruction from "./findInstruction";
+import findRegister from "./findRegister";
 
 // This function handles the functionalitny and logic for converting a binary or hexadecimal number into it's RISC-V instruction
 export const convert = (instruction: string) => {
@@ -17,7 +18,7 @@ export const convert = (instruction: string) => {
 
     let opcode:string = "";
     let RISCV_Instruction:string = "";
-    let instructionType: string = "";
+    let instructionType: string = "None";
 
     // If instruction was given in hexadecimal, convert to binary
     const convertToHex = (instruction: string) => {
@@ -476,27 +477,39 @@ export const convert = (instruction: string) => {
 
 // Logic to convert a 32-bit RISC-V Instruction into it's encoded hexadecimal number
 export const encode = (assembly: string) => {
-    
-    const RTypes = () => {
 
-    }
-
-    const ITypes = () => {
-
-    }
-    
-    let splitInstruction: string[] = assembly.split(" ");
+    let splitInstruction: string[] = assembly.trim().split(" ");
     let getValues = findInstruction(splitInstruction[0]);
-    let encodedHex:number = 0;
+    let encodedHex:string = "Invalid RISC-V instruction"
 
+    // Encoding time
     switch (getValues[3]) {
 
         case "R":
-            RTypes();
+
             break
 
         case "I":
-            ITypes();
+
+            // Extract values
+            let rs2:number = findRegister(splitInstruction[1].slice(0, -1))
+            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
+            let imm:number = parseInt(splitInstruction[3])
+
+            let opcode:any = getValues[0]
+            let funct3:any = getValues[1]
+            let funct7:any = getValues[2]
+
+            // Combine all parts to form hexadecimal representation
+            let formHex: number = 
+                (imm << 20) |  // imm[11:0] - Upper 12 bits
+                (rs1 << 15) |  // rs1 - Next 5 bits
+                (funct3 << 12) |  // funct3 - Next 3 bits
+                (rs2 << 7) |  // rd - Next 5 bits
+                opcode;         // opcode - Last 7 bits
+
+            let hex = formHex.toString(16).padStart(8, '0').toUpperCase();
+            encodedHex = "0x" + hex
             break;
 
         default:
@@ -505,5 +518,5 @@ export const encode = (assembly: string) => {
     }
    
 
-    return encodedHex.toString();
+    return encodedHex
 }

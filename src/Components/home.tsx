@@ -5,9 +5,10 @@ import {convert, encode} from "./convert"
 
 const Home = () => {
     const [instruction, setInstruction] = useState("");
-    const [instructionType, setInstructionType] = useState("None");
+    const [instructionType, setInstructionType] = useState("");
     const [result, setResult] = useState("");
-    const [mode, setMode] = useState("decode"); // New: "decode" or "encode" mode
+    const [mode, setMode] = useState("decode"); 
+    const [hasConverted, setHasConverted] = useState(false); 
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInstruction(event.target.value);
@@ -15,6 +16,7 @@ const Home = () => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // Prevent page reload
+
         if (mode === "decode") {
             const output = convert(instruction); // Decode instruction
             setResult(output[0]);
@@ -62,12 +64,21 @@ const Home = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 px-4 mx-8 rounded">
+                        <button type="submit" className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 px-4 mx-8 rounded" 
+                            onClick={() => {
+                            setHasConverted(true); // Prevent result display before clicking Convert
+                        }}>
                             Convert
                         </button>
 
                         <button className="bg-[#476C9B] hover:bg-[#ADD9F4] text-white font-bold py-2 my-6 px-4 rounded mb-4 mx-8"
-                            onClick={() => setMode(mode === "decode" ? "encode" : "decode")}>
+                            onClick={() => {
+                                setMode(mode === "decode" ? "encode" : "decode")
+                                setResult("");      // Clear result
+                                setInstruction(""); // Clear instruction to prevent stale input
+                                setInstructionType("None"); // Reset instruction type to avoid unexpected display
+                                setHasConverted(false);
+                            }}>
                             Switch to {mode === "decode" ? "Encoder" : "Decoder"}
                         </button>
                         
@@ -75,7 +86,7 @@ const Home = () => {
                 </div>
 
                  {/* ✅ Display the result below the form */}
-                 {result &&  (
+                 {result && hasConverted && instruction && (
                     <div className="mt-4 p-4 bg-[#476C9B] border-[#476C9B] rounded">
                         
                     {mode === "decode" ? (
