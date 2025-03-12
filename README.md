@@ -1,5 +1,7 @@
 # RISC-V Decoder Website
-This website converts a hexadecimal or binary number into a RISC-V Assembly instruction. After taking CMPUT 229, I thought this would be
+This website converts a hexadecimal or binary number into a RISC-V Assembly instruction. 
+<br/>
+After taking CMPUT 229, I thought this would be
 a good project to practice Typescript and RISC-V instruction conversion.
 
 ## Algorithm to decode instruction

@@ -485,38 +485,48 @@ export const encode = (assembly: string) => {
     // Encoding time
     switch (getValues[3]) {
 
-        case "R":
+        // R-type instruction
+        case "R": {
+
+            // Extract values from most significant bit to least significant bit
+            let funct7:any = getValues[2]
+            let rs2:number = findRegister(splitInstruction[3])
+            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
+            let funct3:any = getValues[1]
+            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            let opcode:any = getValues[0]
+                        
+            // Forms the equivalent hex number, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
+            let formHex = ((funct7 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode).toString(16).padStart(8, '0')
+            encodedHex = "0x" + formHex
 
             break
 
-        case "I":
+        }
 
-            // Extract values
-            let rs2:number = findRegister(splitInstruction[1].slice(0, -1))
-            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
+        // I-type instruction
+        case "I": {
+
+            // Extract values from most significant bit to least significant bit
             let imm:number = parseInt(splitInstruction[3])
-
-            let opcode:any = getValues[0]
+            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
             let funct3:any = getValues[1]
-            let funct7:any = getValues[2]
+            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            let opcode:any = getValues[0]
 
-            // Combine all parts to form hexadecimal representation
-            let formHex: number = 
-                (imm << 20) |  // imm[11:0] - Upper 12 bits
-                (rs1 << 15) |  // rs1 - Next 5 bits
-                (funct3 << 12) |  // funct3 - Next 3 bits
-                (rs2 << 7) |  // rd - Next 5 bits
-                opcode;         // opcode - Last 7 bits
+            let funct7:any = getValues[2] // Not needed for all I-type instructions
 
-            let hex = formHex.toString(16).padStart(8, '0').toUpperCase();
-            encodedHex = "0x" + hex
+            // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
+            let formHex: string = ((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
+            encodedHex = "0x" + formHex
             break;
+
+        }
 
         default:
             return "Invalid RISC-V instruction"
 
     }
    
-
     return encodedHex
 }
