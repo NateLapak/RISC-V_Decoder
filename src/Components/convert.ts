@@ -6,6 +6,7 @@
     Written by Nathan Lapak
 */
 
+import { split } from "postcss/lib/list";
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 import findInstruction from "./findInstruction";
@@ -520,7 +521,29 @@ export const encode = (assembly: string) => {
             let formHex: string = ((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
+        }
 
+        // S-type instruction
+        case "S": {
+
+            const seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
+
+            // Extract values from most significant bit to least significant bit
+            let imm:number = parseInt(seperate[1]);
+            let rs1:number = findRegister(seperate[2])
+            let rs2:number = findRegister(splitInstruction[1].slice(0, -1));
+            let funct3:any = getValues[1]
+            let opcode:any = getValues[0]
+
+            // Split immediate
+            let highImm = (imm >> 5) & 0b1111111;
+            let lowImm = imm & 0b11111
+
+            // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
+            let formHex: string = ((highImm << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (lowImm << 7) | opcode).toString(16).padStart(8, '0')
+            encodedHex = "0x" + formHex
+            break;
+            
         }
 
         default:
