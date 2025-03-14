@@ -500,9 +500,7 @@ export const encode = (assembly: string) => {
             // Forms the equivalent hex number, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
             let formHex = ((funct7 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
-
             break
-
         }
 
         // I-type instruction
@@ -525,7 +523,6 @@ export const encode = (assembly: string) => {
 
         // S-type instruction
         case "S": {
-
             const seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
 
             // Extract values from most significant bit to least significant bit
@@ -543,7 +540,26 @@ export const encode = (assembly: string) => {
             let formHex: string = ((highImm << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (lowImm << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
+        }
+
+        // Jump and link (JAL) instructions
+        case "UJ": {
             
+            let imm:number = parseInt(splitInstruction[2])
+            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            let opcode:any = getValues[0]
+ 
+            // Extract immediate into it's different parts
+            let imm20 = (imm >> 20) & 0b1;        
+            let imm10_1 = (imm >> 1) & 0b1111111111; 
+            let imm11 = (imm >> 11) & 0b1;       
+            let imm19_12 = (imm >> 12) & 0b11111111; 
+
+            alert(opcode)
+
+            let formHex:string = ((imm20 << 31) | (imm10_1 << 21) | (imm11 << 20) | (imm19_12 << 12) |(rd << 7) | opcode).toString(16).padStart(8, '0')
+            encodedHex = "0x" + formHex;
+            break
         }
 
         default:
