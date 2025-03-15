@@ -542,6 +542,17 @@ export const encode = (assembly: string) => {
             break;
         }
 
+        // U-type instructions
+        case "U": {
+            let imm:number = parseInt(splitInstruction[2])
+            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            let opcode:any = getValues[0]
+
+            let formHex:string = ((imm << 12) | (rd << 7) | opcode).toString(16).padStart(8, '0')
+            encodedHex = "0x" + formHex
+            break
+        }
+
         // Jump and link (JAL) instructions
         case "UJ": {
             
@@ -554,8 +565,6 @@ export const encode = (assembly: string) => {
             let imm10_1 = (imm >> 1) & 0b1111111111; 
             let imm11 = (imm >> 11) & 0b1;       
             let imm19_12 = (imm >> 12) & 0b11111111; 
-
-            alert(opcode)
 
             let formHex:string = ((imm20 << 31) | (imm10_1 << 21) | (imm11 << 20) | (imm19_12 << 12) |(rd << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex;
