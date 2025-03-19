@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import {convert, encode} from "./convert"
+import {decode, encode} from "./convert"
 
 
 const Home = () => {
@@ -18,7 +18,7 @@ const Home = () => {
         event.preventDefault(); // Prevent page reload
 
         if (mode === "decode") {
-            const output = convert(instruction); // Decode instruction
+            const output = decode(instruction); // Decode instruction
             setResult(output[0]);
             setInstructionType(output[1]);
         } else if (mode === "encode") {
@@ -118,15 +118,15 @@ const Home = () => {
                     0x0c44ea37 --- lui s4, 50254
                     <br/>
                     <br/>
-                    0b00000000010010100010111000000011 --- 0x4A2E03 -- lw t3, 4(s4)
+                    0b00000000010010100010111000000011 --- lw t3, 4(s4)
                     <br/>
-                    0b00000000000111110111001010110011 --- 0x1F72B3 -- and t0, t5, ra
+                    0b00000000000111110111001010110011 --- and t0, t5, ra
                     <br/>
-                    0b00000000100011110000010001100111 --- 0x8F0467 -- jalr s0, 8(t5)
+                    0b00000000100011110000010001100111 --- jalr s0, 8(t5)
                     <br/>
-                    0b00000001111000101101011001100011 --- 0x1E2D663 -- bge t0, t5, 12
+                    0b00000001111000101101011001100011 --- bge t0, t5, 12
                     <br/>
-                    0b00000101010101000100101110010111 --- 0x5544B97 -- auipc s7, 21828
+                    0b00000101010101000100101110010111 --- auipc s7, 21828
                 </p>
 
                 <h6 className="text-xl">Here are some of the examples translated into Python for reference</h6>

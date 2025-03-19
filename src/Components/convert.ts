@@ -6,14 +6,13 @@
     Written by Nathan Lapak
 */
 
-import { split } from "postcss/lib/list";
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 import findInstruction from "./findInstruction";
 import findRegister from "./findRegister";
 
 // This function handles the functionalitny and logic for converting a binary or hexadecimal number into it's RISC-V instruction
-export const convert = (instruction: string) => {
+export const decode = (instruction: string) => {
 
     let result:string = "";
 
@@ -421,26 +420,25 @@ export const convert = (instruction: string) => {
 
         let new_num = +instruction;
         let temp: string = "";
-
+        
         // Get rd
-        let getRD:number = new_num >> 7
-        getRD = getRD & 0x1F;
-
-        // Extract UJ-type immediate
-        let signbit = (new_num >> 31) & 1;        // Bit 20 (Sign Bit)
-        let imm2 = (new_num >> 21) & 0x3FF;  // Bits 10-1
-        let imm3 = (new_num >> 20) & 0x1;      // Bit 11
-        let imm4 = (new_num >> 12) & 0xFF;  // Bits 19-12
-
+        let getRD: number = (new_num >> 7) & 0x1F; // Bits 11-7
+        
+        // Correctly extract UJ-type immediate
+        let signbit = (new_num >> 31) & 1;  
+        let imm_10_1 = (new_num >> 21) & 0x3FF; 
+        let imm_11 = (new_num >> 20) & 0x1; 
+        let imm_19_12 = (new_num >> 12) & 0xFF; 
+        
         // Assemble the full 21-bit immediate
-        let combinedImm: number = (signbit << 20) | (imm2 << 12) | (imm3 << 11) | (imm4 << 1);
-
+        let combinedImm: number = (signbit << 20) | (imm_19_12 << 12) | (imm_11 << 11) | (imm_10_1 << 1);
+        
         // Sign-extend 21-bit immediate
         if (signbit === 1) {
-            combinedImm = combinedImm | ~0x1FFFFF;  // Sign-extend 21-bit immediate
+            combinedImm = combinedImm | ~0x1FFFFF;  // Proper sign extension for 21-bit
         }
-
-        let rd:string = determineRegister(getRD);
+        
+        let rd: string = determineRegister(getRD);
         temp = "jal " + rd + ", " + combinedImm;
         return temp;
 
@@ -506,19 +504,37 @@ export const encode = (assembly: string) => {
         // I-type instruction
         case "I": {
 
-            // Extract values from most significant bit to least significant bit
-            let imm:number = parseInt(splitInstruction[3])
-            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
-            let funct3:any = getValues[1]
-            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
-            let opcode:any = getValues[0]
+            // I-type arithmetic instructions
+            if (getValues[0] == 0b0010011) {
 
-            let funct7:any = getValues[2] // Not needed for all I-type instructions
+                // Extract values from most significant bit to least significant bit
+                let imm:number = parseInt(splitInstruction[3])
+                let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
+                let funct3:any = getValues[1]
+                let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+                let opcode:any = getValues[0]
 
-            // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-            let formHex: string = ((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
-            encodedHex = "0x" + formHex
-            break;
+                // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
+                let formHex: string = ((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
+                encodedHex = "0x" + formHex
+                break;
+
+            }
+
+            // I-type load instructions and jump (jalr)
+            else {
+                const seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
+
+                let imm:number = parseInt(seperate[1]);
+                let rs1:number = findRegister(seperate[2])
+                let funct3:any = getValues[1]
+                let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+                let opcode:any = getValues[0]
+
+                let formHex: string = ((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
+                encodedHex = "0x" + formHex
+                break
+            }
         }
 
         // S-type instruction
@@ -538,6 +554,25 @@ export const encode = (assembly: string) => {
 
             // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
             let formHex: string = ((highImm << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (lowImm << 7) | opcode).toString(16).padStart(8, '0')
+            encodedHex = "0x" + formHex
+            break;
+        }
+
+        // SB-type instructions (branch instructions)
+        case "SB": {
+
+            let imm:number = parseInt(splitInstruction[3])
+            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
+            let funct3:any = getValues[1]
+            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            let opcode:any = getValues[0]
+
+            // Split immediate
+            let highImm = (imm >> 5) & 0b1111111;
+            let lowImm = imm & 0b11111
+            
+            // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
+            let formHex: string = ((highImm << 25) | (rs1 << 20) | (rd << 15) | (funct3 << 12) | (lowImm << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
         }
