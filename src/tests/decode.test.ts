@@ -44,5 +44,17 @@ test("Decode binary numbers", () => {
 test("Intermediate decoding hex numbers", () => {
 
     // Test 1
+    expect(decode("0x4072d2b3")).toEqual(["sra t0, t0, t2", "R-Type"]);
 
+    // Test 2
+    expect(decode("0x404ed393")).toEqual(["srai t2, t4, 4", "I-Type"]);
+
+    // Test 3
+    expect(decode("0x00845393")).toEqual(["srli t2, s0, 8", "I-Type"]);
+
+    // Test 4
+    expect(decode("0x00ae1f33")).toEqual(["sll t5, t3, a0", "R-Type"]);
+
+    // Test 5
+    expect(decode("0x008a3eb3")).toEqual(["sltu t4, s4, s0", "R-Type"]);
 })

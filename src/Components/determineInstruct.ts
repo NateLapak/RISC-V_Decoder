@@ -25,25 +25,25 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
                 break;
 
             case 0b001:
-                RISCV_Instruction = "Sll";
+                RISCV_Instruction = "sll";
                 break;
 
             case 0b010:
-                RISCV_Instruction = "Slt";
+                RISCV_Instruction = "slt";
                 break;
 
             case 0b011:
-                RISCV_Instruction = "Sltu";
+                RISCV_Instruction = "sltu";
                 break;
 
             case 0b100:
-                RISCV_Instruction = "Xor";
+                RISCV_Instruction = "xor";
                 break;
 
             // Need to differentiate srli and srai
             case 0b101:
                 if (funct7 == 0) {
-                    RISCV_Instruction = "Srl";
+                    RISCV_Instruction = "srl";
                 }
 
                 else {
