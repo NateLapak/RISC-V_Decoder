@@ -35,3 +35,5 @@ test("Encode instructions to hexadecimal numbers", () => {
 
 })
 
+// Intermediate encoding tests
+

@@ -86,6 +86,12 @@ export const decode = (instruction: string) => {
                 instructionType = "I-Type"
                 break;
 
+            // System instructions 
+            case "1110011":
+                new_instruction = SysInstructions(instruction)
+                instructionType = "I-Type"
+                break
+
             // S-type opcode
             case "0100011":
                 new_instruction = STypeStore(instruction, 5);
@@ -165,30 +171,34 @@ export const decode = (instruction: string) => {
         let temp: string = "";
 
         // Get rd
-        let getRD:number = new_num >> 7
-        getRD = getRD & 0x1F;
+        let getRD: number = (new_num >> 7) & 0x1F;
 
         // Get funct3
-        let getfunct3:number = new_num >> 12;
-        getfunct3 = getfunct3 & 0x7;
+        let getfunct3: number = (new_num >> 12) & 0x7;
 
         // Get rs1
-        let getrs1:number = new_num >> 15;
-        getrs1 = getrs1 & 0x1F;
+        let getrs1: number = (new_num >> 15) & 0x1F;
 
         // Get sign bit of immediate
-        let signbit:number = (new_num >> 31) & 1;
+        let signbit: number = (new_num >> 31) & 1;
 
-        let getimm:number = new_num >> 20;
-        getimm = getimm & 0xFFF;
+        // Get immediate (default extraction)
+        let getimm: number = (new_num >> 20) & 0xFFF;
 
-        // Handle negative values
-        if (signbit === 1) {
-            getimm = getimm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+        // Check if instruction is shift immediate (SLLI, SRLI, SRAI)
+        let funct7: number = 0; 
+        if (getfunct3 === 0b001 || getfunct3 === 0b101) {  
+            funct7 = (new_num >> 25) & 0x7F;  // Extract funct7 from bits 31:25
+            getimm = (new_num >> 20) & 0x3F;  // Extract shift amount (shamt), only 6 bits
         }
-        
+
+        // Handle negative values (only for non-shift instructions)
+        if (signbit === 1 && (getfunct3 !== 0b001 && getfunct3 !== 0b101)) {
+            getimm = getimm | ~0xFFF; // Sign-extend 12-bit immediate to 32-bit
+        }
+                
         let rd:string = determineRegister(getRD);
-        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        let translatedInstruction:string = determineInstruct(getfunct3, type, funct7);
         let rs1:string = determineRegister(getrs1);
         let imm:string = getimm.toString();
 
@@ -276,6 +286,11 @@ export const decode = (instruction: string) => {
 
         temp = translatedInstruction + " " + rd + ", " + imm + "(" + rs1 + ")";
         return temp;
+    }
+
+    // System instructions
+    const SysInstructions = (instruction:string) => {
+        return instruction;
     }
 
     // S-type Store instruction

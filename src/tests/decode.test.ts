@@ -1,6 +1,6 @@
 import {decode} from "../Components/convert"
 
-// Basic decoding tests for hexadecimal numbers
+// Basic decoding tests for hexadecimal numbers. These test cases are taken from the examples list
 test("Decode hexadecimal numbers", () => {
 
     // Test 1
@@ -20,7 +20,7 @@ test("Decode hexadecimal numbers", () => {
 
 });
 
-// Basic decoding tests for binary numbers
+// Basic decoding tests for binary numbers. These test cases are taken from the examples list 
 test("Decode binary numbers", () => {
 
     // Test 1
@@ -40,7 +40,7 @@ test("Decode binary numbers", () => {
 
 })
 
-// Intermediate decoding tests for hexadecimal numbers
+// Intermediate decoding tests for hexadecimal numbers. 
 test("Intermediate decoding hex numbers", () => {
 
     // Test 1
@@ -57,4 +57,19 @@ test("Intermediate decoding hex numbers", () => {
 
     // Test 5
     expect(decode("0x008a3eb3")).toEqual(["sltu t4, s4, s0", "R-Type"]);
+})
+
+// More advanced binary numbers
+test("Binary decoding numbers", () => {
+
+    expect(decode("0b00000000100011101001001010010011")).toEqual(["slli t0, t4, 8", "I-Type"]);
+
+    expect(decode("0b00000000100011101001001010010011")).toEqual(["ecall", "I-Type"]);
+
+    expect(decode("0b00000000000100000000000001110011")).toEqual(["ebreak", "I-Type"]);
+
+    expect(decode("0b11111111010101010101111011100011")).toEqual(["bge a0, s5, -4", "SB-Type"])
+
+    expect(decode("11111111100000101000101010000011")).toEqual(["lb s5, -8(t0)", "I-Type"])
+
 })

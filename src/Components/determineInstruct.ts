@@ -78,32 +78,40 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
                 break;
 
             case 0b001:
-                RISCV_Instruction = "Slli";
+                RISCV_Instruction = "slli";
                 break;
 
             case 0b010:
-                RISCV_Instruction = "Slti";
+                RISCV_Instruction = "slti";
                 break;
 
             case 0b011:
-                RISCV_Instruction = "Sltiu";
+                RISCV_Instruction = "sltiu";
                 break;
 
             case 0b100:
-                RISCV_Instruction = "Xori";
+                RISCV_Instruction = "xori";
                 break;
 
             // Need to differentiate srli and srai
             case 0b101:
-                RISCV_Instruction = "Srli";
-                break;
+                
+                if (funct7 == 0) {
+                    RISCV_Instruction = "srli";
+                    break;
+                }
+
+                else {
+                    RISCV_Instruction = "srai";
+                    break
+                }
 
             case 0b110:
-                RISCV_Instruction = "Ori";
+                RISCV_Instruction = "ori";
                 break;
 
             case 0b111:
-                RISCV_Instruction = "111";
+                RISCV_Instruction = "andi";
                 break;
 
             default:
