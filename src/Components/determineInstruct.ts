@@ -7,6 +7,43 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
     let RISCV_Instruction:string = "";
 
+    const SystemInstruction = () => {
+
+        switch (funct3) {
+
+            case 0b001:
+                RISCV_Instruction = "crssw";
+                break
+
+            case 0b010:
+                RISCV_Instruction = "csrrs";
+                break
+
+            case 0b011:
+                RISCV_Instruction = "csrrc";
+                break
+
+            case 0b101:
+                RISCV_Instruction = "csrrwi";
+                break
+
+            case 0b110:
+                RISCV_Instruction = "csrrsi"
+                break
+
+            case 0b111:
+                RISCV_Instruction = "csrrci"
+                break
+
+            default:
+                break;
+            
+
+        }
+
+    }
+
+
     // R-type instructions
     const RTypeInstruction = () => {
 
@@ -221,6 +258,11 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
 
     // Determine instruction type
     switch (instructType) {
+
+        // System instructions
+        case 0:
+            SystemInstruction();
+            break
 
         // R-Type instruction
         case 1:

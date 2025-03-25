@@ -64,12 +64,25 @@ test("Binary decoding numbers", () => {
 
     expect(decode("0b00000000100011101001001010010011")).toEqual(["slli t0, t4, 8", "I-Type"]);
 
-    expect(decode("0b00000000100011101001001010010011")).toEqual(["ecall", "I-Type"]);
+    expect(decode("0b00000000000000000000000001110011")).toEqual(["ecall", "I-Type"]);
 
     expect(decode("0b00000000000100000000000001110011")).toEqual(["ebreak", "I-Type"]);
 
     expect(decode("0b11111111010101010101111011100011")).toEqual(["bge a0, s5, -4", "SB-Type"])
 
-    expect(decode("11111111100000101000101010000011")).toEqual(["lb s5, -8(t0)", "I-Type"])
+    expect(decode("0b11111111100000101000101010000011")).toEqual(["lb s5, -8(t0)", "I-Type"])
 
+})
+
+// Test csr instructions
+test("Csr instructions", () => {
+
+    expect(decode("0x305322f3")).toEqual(["csrrs t0, mtvec, t1", "I-Type"])
+
+})
+
+// Test instructions with a negative immediate
+test("Negative immediates", () => {
+
+    expect(decode("0xfea28293")).toEqual(["addi t0, t0, -22", "I-Type"])
 })

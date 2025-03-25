@@ -45,6 +45,7 @@ export const decode = (instruction: string) => {
     const determineType = (instruction:string, opcode:string) => {
 
         /*
+            System instructions = 0
             R-type = 1
             I-type arithmetic = 2 
             I-type Load = 3
@@ -88,7 +89,7 @@ export const decode = (instruction: string) => {
 
             // System instructions 
             case "1110011":
-                new_instruction = SysInstructions(instruction)
+                new_instruction = SysInstructions(instruction, 0)
                 instructionType = "I-Type"
                 break
 
@@ -277,6 +278,7 @@ export const decode = (instruction: string) => {
         // Handle negative values
         if (signbit === 1) {
             getimm = getimm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+            getimm -= 1
         }
 
         let rd:string = determineRegister(getRD);
@@ -289,8 +291,41 @@ export const decode = (instruction: string) => {
     }
 
     // System instructions
-    const SysInstructions = (instruction:string) => {
-        return instruction;
+    const SysInstructions = (instruction:string, type:number) => {
+
+        let new_num = +instruction;
+        let temp: string = "";
+
+
+        // Get funct3
+        let getfunct3: number = (new_num >> 12) & 0x7;
+
+        // Get rs1
+        let getrs1: number = (new_num >> 15) & 0x1F;
+
+        // Get rd
+        let getRD: number = (new_num >> 7) & 0x1F;
+
+        // Get immediate (imm[11:0])
+        let getimm: number = (new_num >> 20) & 0xFFF;
+
+        // **Special Case: ECALL and EBREAK (funct3 = 000)**
+        if (getfunct3 === 0b000) {
+            if (getimm === 0x000) {
+                return "ecall";
+            } else if (getimm === 0x001) {
+                return "ebreak";
+            }
+        }
+
+        let rd:string = determineRegister(getRD);
+        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        let rs1:string = determineRegister(getrs1);
+        let imm:string = getimm.toString();
+
+
+        temp = translatedInstruction + " " + rd + ", " + imm + "(" + rs1 + ")";
+        return temp;
     }
 
     // S-type Store instruction
@@ -323,6 +358,7 @@ export const decode = (instruction: string) => {
         // Handle negative values
         if (signbit === 1) {
             combinedImm = combinedImm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+            combinedImm -= 1
         }
 
         // Get register name and instruction
@@ -364,9 +400,9 @@ export const decode = (instruction: string) => {
         // Handle negative values
         if (signbit === 1) {
             combinedImm = combinedImm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+            combinedImm -= 1;
         }
         
-
         // Get register name and instruction
         let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
         let rs1:string = determineRegister(getrs1);
@@ -395,6 +431,7 @@ export const decode = (instruction: string) => {
         // Handle negative values
         if (signbit === 1) {
             imm = imm | ~0xFFFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+            imm -= 1
         }
         
 
@@ -422,6 +459,7 @@ export const decode = (instruction: string) => {
         // Handle negative values
         if (signbit === 1) {
             imm = imm | ~0xFFFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
+            imm -= 1
         }
                 
         let rd:string = determineRegister(getRD);
@@ -451,6 +489,7 @@ export const decode = (instruction: string) => {
         // Sign-extend 21-bit immediate
         if (signbit === 1) {
             combinedImm = combinedImm | ~0x1FFFFF;  // Proper sign extension for 21-bit
+            combinedImm -= 1
         }
         
         let rd: string = determineRegister(getRD);
