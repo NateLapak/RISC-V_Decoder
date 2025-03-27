@@ -29,6 +29,29 @@ const Home = () => {
 
     };
 
+    const decodeAlgo:string[] = [
+        '1. Extract binary or hex number inputted by user',
+        '2. Determine opcode by extracting the lowest 6 bits of the 32-bit instruction',
+        '3. Using the opcode, determine the instruction type (I-Type, R-Type, S-type, etc)',
+        '4. Determine mnemonic of instruction by using funct3 and funct7 of instruction',
+        '5. Translate decimal representation of registers to register name',
+        '6. If instruction uses an immediate, combine parts to form the full immediate',
+        '7. If immediate is negative, use Two\'\s complement to convert',
+        '8. Return resulting RISC-V Instruction and output it to user'
+    
+    ]
+
+    const encodeAlgo:string[] = [
+        '1. Extract RISC-V Instruction inputted by user',
+        '2. Split user input into 3 parts: The mnemonic, the registers, and the immediate (if applicable)',
+        '3. Using the instruction\'\s mnemonic, determine its opcode, funct3 and funct7.',
+        '4. Translate the register name to its decimal representation',
+        '5. Convert the immediate of instruction to binary',
+        '6. If immediate is negative, use two\'\s complement to encode.',
+        '7. Combine the opcode, funct3, funct7, registers, and immediate into 8 hexadecimal characters.',
+        '8. Return resulting hexadecimal number and output it to user'
+    ]
+    
     return (
         <div className="container-fluid py-4">
             <div className="homepage my-8">
@@ -104,7 +127,23 @@ const Home = () => {
                     </div>
                 )}
 
-                <h4>Examples of I/O in Hexadecimal and Binary. </h4>
+                <div>
+                    <h4 className="py-5 my-5">
+                        {mode === "decode" 
+                        ? "Algorithm for decoding instructions" 
+                        : "Algorithm for encoding instructions"}
+                    </h4>
+                    
+                    {mode === "decode" 
+                        ? decodeAlgo.map((step, index) => (
+                            <p key={index}>{step}</p>
+                          ))
+                        : encodeAlgo.map((step, index) => (
+                            <p key={index}>{step}</p>
+                          ))}
+                </div>
+
+                <h4>Examples of instruction conversion in Hexadecimal and Binary </h4>
                 <p>
                     <br/>
                     0x00128293 --- addi t0, t0, 1
