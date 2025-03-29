@@ -135,6 +135,32 @@ const determineRegister = (registerNum:number) => {
             register = "t6";
             break;
 
+        // The next registers are csr registers
+        case 0x300:
+            register = "mstatus"
+            break
+
+        case 0x302:
+            register = "medeleg";
+            break
+
+        case 0x304:
+            register = "mie";
+            break
+
+        case 0x305:
+            register = "mtvec";
+            break
+
+        case 0x341:
+            register = "mepc";
+            break;
+
+        case 0x342:
+            register = "mcause";
+            break
+
+
         default:
             register = "";
             break;

@@ -6,6 +6,7 @@
     Written by Nathan Lapak
 */
 
+import { sign } from "crypto";
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 import findInstruction from "./findInstruction";
@@ -203,6 +204,7 @@ export const decode = (instruction: string) => {
         let rs1:string = determineRegister(getrs1);
         let imm:string = getimm.toString();
 
+        
 
         temp = translatedInstruction + " " + rd + ", " + rs1 + ", " + imm;
         return temp;
@@ -320,11 +322,17 @@ export const decode = (instruction: string) => {
 
         let rd:string = determineRegister(getRD);
         let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
-        let rs1:string = determineRegister(getrs1);
-        let imm:string = getimm.toString();
+        let csr:string = determineRegister(getimm);
 
+        if (getfunct3 == 5 || getfunct3 == 6 || getfunct3 == 7) {
+            temp = translatedInstruction + " " + rd + ", " + csr + ", " + getrs1
+        }
 
-        temp = translatedInstruction + " " + rd + ", " + imm + "(" + rs1 + ")";
+        else {
+            let rs1:string = determineRegister(getrs1);
+            temp = translatedInstruction + " " + rd + ", " + csr + ", " + rs1 
+        }
+
         return temp;
     }
 

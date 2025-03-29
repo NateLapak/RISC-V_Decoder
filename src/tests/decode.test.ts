@@ -78,6 +78,14 @@ test("Binary decoding numbers", () => {
 test("Csr instructions", () => {
 
     expect(decode("0x305322f3")).toEqual(["csrrs t0, mtvec, t1", "I-Type"])
+    
+    expect(decode("0x3003b573")).toEqual(["csrrc a0, mstatus, t2", "I-Type"])
+
+    expect(decode("0x341a6573")).toEqual(["csrrs a0, mepc, a0", "I-Type"])
+
+    expect(decode("0x342392f3")).toEqual(["csrrw t0, mcause, t2", "I-Type"])
+
+    expect(decode("0x304e7473")).toEqual(["csrrc s0, mie, s5", "I-Type"])
 
 })
 
@@ -85,4 +93,6 @@ test("Csr instructions", () => {
 test("Negative immediates", () => {
 
     expect(decode("0xfea28293")).toEqual(["addi t0, t0, -22", "I-Type"])
+    expect(decode("0xffd3dde3")).toEqual(["bge t2, t4, -6", "SB-Type"])
+    expect(decode("0xff428e83")).toEqual(["lb t4, -12(t0)", "I-Type"])
 })
