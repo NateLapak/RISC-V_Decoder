@@ -6,7 +6,6 @@
     Written by Nathan Lapak
 */
 
-import { sign } from "crypto";
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 import findInstruction from "./findInstruction";
@@ -547,7 +546,7 @@ export const encode = (assembly: string) => {
     switch (getValues[3]) {
 
         // R-type instruction
-        case "R": {
+        case "R-Type": {
 
             // Extract values from most significant bit to least significant bit
             let funct7:any = getValues[2]
@@ -564,7 +563,7 @@ export const encode = (assembly: string) => {
         }
 
         // I-type instruction
-        case "I": {
+        case "I-Type": {
 
             // I-type arithmetic instructions
             if (getValues[0] == 0b0010011) {
@@ -576,8 +575,15 @@ export const encode = (assembly: string) => {
                 let rd:number = findRegister(splitInstruction[1].slice(0, -1))
                 let opcode:any = getValues[0]
 
+                let funct7: number = 0; // Default funct7
+
+                // Special handling for SRAI
+                if (funct3 === 0b101 && (splitInstruction[0] === "srai")) {
+                    funct7 = 0b0100000; // SRAI's funct7
+                }
+
                 // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-                let formHex: string = ((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
+                let formHex: string = ((funct7 << 25) | (imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
                 encodedHex = "0x" + formHex
                 break;
 
@@ -600,7 +606,7 @@ export const encode = (assembly: string) => {
         }
 
         // S-type instruction
-        case "S": {
+        case "S-Type": {
             const seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
 
             // Extract values from most significant bit to least significant bit
@@ -621,7 +627,7 @@ export const encode = (assembly: string) => {
         }
 
         // SB-type instructions (branch instructions)
-        case "SB": {
+        case "SB-Type": {
 
             let imm:number = parseInt(splitInstruction[3])
             let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
@@ -640,7 +646,7 @@ export const encode = (assembly: string) => {
         }
 
         // U-type instructions
-        case "U": {
+        case "U-Type": {
             let imm:number = parseInt(splitInstruction[2])
             let rd:number = findRegister(splitInstruction[1].slice(0, -1))
             let opcode:any = getValues[0]
@@ -651,7 +657,7 @@ export const encode = (assembly: string) => {
         }
 
         // Jump and link (JAL) instructions
-        case "UJ": {
+        case "UJ-Type": {
             
             let imm:number = parseInt(splitInstruction[2])
             let rd:number = findRegister(splitInstruction[1].slice(0, -1))
@@ -672,6 +678,6 @@ export const encode = (assembly: string) => {
             return "Invalid RISC-V instruction"
 
     }
-   
-    return encodedHex
+    
+    return [encodedHex, getValues[3]]
 }

@@ -31,7 +31,9 @@ Here is the algorithm I used to convert a RISC-V instruction into its hexadecima
 
 ## Testing decode and encode functions
 Unit tests were done to ensure the correctness of the encode and decode functions in convert.ts. This was done using ts-jest, a Javascript or Typescript testing framework.
-Tests are saved in the tests folder, found in /src/tests. To run the unit test, use npm test.
+Tests are saved in the tests folder, found in /src/tests. 
+<br/>
+To run the unit test, use npm test.
 
 ## Tech stack
 List of programming languages and technolgies used

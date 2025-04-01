@@ -12,7 +12,7 @@ const determineInstruct = (funct3:number, instructType:number, funct7:number ) =
         switch (funct3) {
 
             case 0b001:
-                RISCV_Instruction = "crssw";
+                RISCV_Instruction = "csrrw";
                 break
 
             case 0b010:

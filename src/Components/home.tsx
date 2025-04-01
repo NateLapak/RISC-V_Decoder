@@ -23,8 +23,8 @@ const Home = () => {
             setInstructionType(output[1]);
         } else if (mode === "encode") {
             const output = encode(instruction); // Encode RISC-V assembly
-            setResult(output);
-            setInstructionType("");
+            setResult(output[0]);
+            setInstructionType(output[1])
         }
 
     };
@@ -33,7 +33,7 @@ const Home = () => {
         '1. Extract binary or hex number inputted by user',
         '2. Determine opcode by extracting the lowest 6 bits of the 32-bit instruction',
         '3. Using the opcode, determine the instruction type (I-Type, R-Type, S-type, etc)',
-        '4. Determine mnemonic of instruction by using funct3 and funct7 of instruction',
+        '4. Given the instruction type, determine the name of the instruction by using funct3 and funct7 (if needed)',
         '5. Translate decimal representation of registers to register name',
         '6. If instruction uses an immediate, combine parts to form the full immediate',
         '7. If immediate is negative, use Two\'\s complement to convert',
@@ -43,7 +43,7 @@ const Home = () => {
 
     const encodeAlgo:string[] = [
         '1. Extract RISC-V Instruction inputted by user',
-        '2. Split user input into 3 parts: The mnemonic, the registers, and the immediate (if applicable)',
+        '2. Split user input into 3 parts: The name of the instruction, the registers, and the immediate (if applicable)',
         '3. Using the instruction\'\s mnemonic, determine its opcode, funct3 and funct7.',
         '4. Translate the register name to its decimal representation',
         '5. Convert the immediate of instruction to binary',
@@ -82,7 +82,7 @@ const Home = () => {
                                 <p className="text-[#476C9B] text-xs italic">
                                     {mode === "decode" 
                                         ? "Works only for 32-bit RISC-V Assembly" 
-                                        : "Convert RISC-V Assembly to Hexadecimal"}
+                                        : "Convert 32-bit RISC-V Assembly to Hexadecimal"}
                                 </p>
                             </div>
                         </div>
@@ -121,6 +121,7 @@ const Home = () => {
                     ) : (
                         <>
                             <h3 className="text-lg text-[#101419]"><b>RISC-V Instruction:</b> {instruction}</h3>
+                            <h3 className="text-lg text-[#101419]"><b>Instruction Type:</b> {instructionType}</h3>
                             <h3 className="text-lg text-[#101419]"><b>Encoded Hexadecimal:</b> {result}</h3>
                         </>
                     )}
@@ -141,6 +142,9 @@ const Home = () => {
                         : encodeAlgo.map((step, index) => (
                             <p key={index}>{step}</p>
                           ))}
+
+                    <br/>
+                    <h6>This is a general overview of the algorithm. There could be more or less steps depending on the specific instruction.</h6>
                 </div>
 
                 <h4>Examples of instruction conversion in Hexadecimal and Binary </h4>
