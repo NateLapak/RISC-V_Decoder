@@ -568,33 +568,70 @@ export const encode = (assembly: string) => {
             // I-type arithmetic instructions
             if (getValues[0] == 0b0010011) {
 
-                // Extract values from most significant bit to least significant bit
-                let imm:number = parseInt(splitInstruction[3])
-                let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
-                let funct3:any = getValues[1]
-                let rd:number = findRegister(splitInstruction[1].slice(0, -1))
-                let opcode:any = getValues[0]
+               // Extract values from most significant bit to least significant bit
+                let imm: number = parseInt(splitInstruction[3]);
+                let rs1: number = findRegister(splitInstruction[2].slice(0, -1));
+                let funct3: any = getValues[1];
+                let rd: number = findRegister(splitInstruction[1].slice(0, -1));
+                let opcode: any = getValues[0];
 
                 let funct7: number = 0; // Default funct7
 
                 // Special handling for SRAI
-                if (funct3 === 0b101 && (splitInstruction[0] === "srai")) {
+                if (funct3 === 0b101 && splitInstruction[0] === "srai") {
                     funct7 = 0b0100000; // SRAI's funct7
                 }
 
+                // Sign-extend the immediate (assuming it's 12-bit)
+                imm = imm & 0xFFF; // Mask to 12 bits
+                if (imm & 0x800) {  // If the 12th bit is set, extend the sign
+                    imm |= 0xFFFFF000; // Extend to 32 bits
+                }
+
+                
                 // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-                let formHex: string = ((funct7 << 25) | (imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
-                encodedHex = "0x" + formHex
+                let formHex: string = (((funct7 << 25) | (imm << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode) >>> 0 )
+                    .toString(16)
+                    .padStart(8, '0');
+                encodedHex = "0x" + formHex;
                 break;
 
+
+            }
+
+            // System instructions
+            else if (getValues[0] == 0b1110011) {
+
+                if (splitInstruction[0] == "ecall") {
+                    encodedHex = "0x00000073"
+                    break
+                }
+
+                else if (splitInstruction[0] == "ebreak") {
+                    encodedHex = "0x00100073"
+                    break
+                }
+
+
+                
             }
 
             // I-type load instructions and jump (jalr)
             else {
-                const seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
 
-                let imm:number = parseInt(seperate[1]);
-                let rs1:number = findRegister(seperate[2])
+                let seperate:any = 0
+                let imm:number = 0;
+                let rs1:number = 0;
+                try {
+                    seperate = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
+                    imm = parseInt(seperate[1]);
+                    rs1 = findRegister(seperate[2])
+                }
+
+                catch(e) {
+                    return "Error"
+                }
+                
                 let funct3:any = getValues[1]
                 let rd:number = findRegister(splitInstruction[1].slice(0, -1))
                 let opcode:any = getValues[0]
@@ -607,7 +644,17 @@ export const encode = (assembly: string) => {
 
         // S-type instruction
         case "S-Type": {
-            const seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
+
+            let seperate:any = 0;
+
+            try {
+                seperate = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
+            }
+
+            catch(e) {
+                break
+            }
+
 
             // Extract values from most significant bit to least significant bit
             let imm:number = parseInt(seperate[1]);
@@ -620,8 +667,15 @@ export const encode = (assembly: string) => {
             let highImm = (imm >> 5) & 0b1111111;
             let lowImm = imm & 0b11111
 
+            
+            // Sign-extend the immediate (assuming it's 12-bit)
+            imm = imm & 0xFFF; // Mask to 12 bits
+            if (imm & 0x800) {  // If the 12th bit is set, extend the sign
+                imm |= 0xFFFFF000; // Extend to 32 bits
+            }
+
             // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-            let formHex: string = ((highImm << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (lowImm << 7) | opcode).toString(16).padStart(8, '0')
+            let formHex: string = (((highImm << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
         }
@@ -638,9 +692,14 @@ export const encode = (assembly: string) => {
             // Split immediate
             let highImm = (imm >> 5) & 0b1111111;
             let lowImm = imm & 0b11111
+
+            imm = imm & 0xFFF; // Mask to 12 bits
+            if (imm & 0x800) {  // If the 12th bit is set, extend the sign
+                imm |= 0xFFFFF000; // Extend to 32 bits
+            }
             
             // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-            let formHex: string = ((highImm << 25) | (rs1 << 20) | (rd << 15) | (funct3 << 12) | (lowImm << 7) | opcode).toString(16).padStart(8, '0')
+            let formHex: string = (((highImm << 25) | (rs1 << 20) | (rd << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
         }
@@ -675,9 +734,10 @@ export const encode = (assembly: string) => {
         }
 
         default:
-            return "Invalid RISC-V instruction"
+            encodedHex = "Invalid RISC-V instruction"
+            break
 
     }
-    
+
     return [encodedHex, getValues[3]]
 }

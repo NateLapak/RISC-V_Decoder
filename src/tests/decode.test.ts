@@ -85,7 +85,7 @@ test("Csr instructions", () => {
 
     expect(decode("0x342392f3")).toEqual(["csrrw t0, mcause, t2", "I-Type"])
 
-    expect(decode("0x304e7473")).toEqual(["csrrc s0, mie, s5", "I-Type"])
+    expect(decode("0x304e7473")).toEqual(["csrrci s0, mie, 28", "I-Type"])
 
 })
 
