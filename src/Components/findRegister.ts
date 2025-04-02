@@ -135,6 +135,30 @@ const findRegister = (register:string) => {
             registerNum = 31;
             break;
 
+        case "mstatus":
+            registerNum = 0x300
+            break
+
+        case "medeleg":
+            registerNum = 0x302
+            break
+
+        case "mie":
+            registerNum = 0x304
+            break
+
+        case "mtvec":
+            registerNum = 0x305
+            break
+
+        case "mepc":
+            registerNum = 0x341
+            break;
+
+        case "mcause":
+            registerNum = 0x342
+            break
+
         default:
             break;
     }

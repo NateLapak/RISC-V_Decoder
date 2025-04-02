@@ -612,31 +612,49 @@ export const encode = (assembly: string) => {
                     break
                 }
 
+                else {
+                    
+                    // CSR Instructions (csrrw, csrrs, csrrc)
+                    let rd:number = findRegister(splitInstruction[1].slice(0, -1));
+                    let csr:number = findRegister(splitInstruction[2].slice(0, -1));
+                    let rs1:number = findRegister(splitInstruction[3])
+                    let funct3;
+                    let opcode:number = getValues[0]
+                    
+                    if (splitInstruction[0] == "csrrw") {
+                        funct3 = 0b001;
+                    } else if (splitInstruction[0] == "csrrs") {
+                        funct3 = 0b010;
+                    } else if (splitInstruction[0] == "csrrc") {
+                        funct3 = 0b011;
+                    } else {
+                        throw new Error("Unsupported system instruction: " + splitInstruction[0]);
+                    }
 
-                
+                    
+                    // Encode instruction
+                    let formHex = (((csr << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode) >>> 0)
+                        .toString(16)
+                        .padStart(8, '0');
+                    
+                    encodedHex = "0x" + formHex;
+                    break
+                }
+
+  
             }
 
             // I-type load instructions and jump (jalr)
             else {
 
-                let seperate:any = 0
-                let imm:number = 0;
-                let rs1:number = 0;
-                try {
-                    seperate = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
-                    imm = parseInt(seperate[1]);
-                    rs1 = findRegister(seperate[2])
-                }
-
-                catch(e) {
-                    return "Error"
-                }
-                
+                let seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
+                let imm:number = parseInt(seperate[1]);
+                let rs1:number = findRegister(seperate[2])
                 let funct3:any = getValues[1]
                 let rd:number = findRegister(splitInstruction[1].slice(0, -1))
                 let opcode:any = getValues[0]
 
-                let formHex: string = ((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode).toString(16).padStart(8, '0')
+                let formHex: string = (((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode) >>> 0 ).toString(16).padStart(8, '0')
                 encodedHex = "0x" + formHex
                 break
             }
@@ -686,20 +704,21 @@ export const encode = (assembly: string) => {
             let imm:number = parseInt(splitInstruction[3])
             let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
             let funct3:any = getValues[1]
-            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            let rs2:number = findRegister(splitInstruction[1].slice(0, -1))
             let opcode:any = getValues[0]
 
-            // Split immediate
-            let highImm = (imm >> 5) & 0b1111111;
-            let lowImm = imm & 0b11111
-
+            
             imm = imm & 0xFFF; // Mask to 12 bits
             if (imm & 0x800) {  // If the 12th bit is set, extend the sign
                 imm |= 0xFFFFF000; // Extend to 32 bits
             }
+
+            // Split immediate
+            let highImm = (imm >> 5) & 0b1111111;
+            let lowImm = imm & 0b11111
             
             // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-            let formHex: string = (((highImm << 25) | (rs1 << 20) | (rd << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
+            let formHex: string = (((highImm << 25) | (rs1 << 20) | (rs2 << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
         }
