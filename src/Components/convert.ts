@@ -6,6 +6,8 @@
     Written by Nathan Lapak
 */
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import determineInstruct from "./determineInstruct";
 import determineRegister from "./determineRegister";
 import findInstruction from "./findInstruction";
@@ -22,7 +24,7 @@ export const decode = (instruction: string) => {
 
     // If instruction was given in hexadecimal, convert to binary
     const convertToHex = (instruction: string) => {
-        let hex_num: number = +instruction;
+        const hex_num: number = +instruction;
         return hex_num.toString(16).padStart(8, '0');
     }
 
@@ -30,13 +32,13 @@ export const decode = (instruction: string) => {
     const determineOpcode = (instruction:string) => {
 
         // Convert string to number
-        let new_num:number = +instruction;
+        const new_num:number = +instruction;
 
         // Mask the lowest 7 bits that represent the opcode
-        let getOpcode:number = new_num & 0x7F;
+        const getOpcode:number = new_num & 0x7F;
 
         // Adjust opcode so that it fits into 7 bits all the time
-        let adjustNum: string = getOpcode.toString(2).padStart(7, '0');
+        const adjustNum: string = getOpcode.toString(2).padStart(7, '0');
         
         return adjustNum
     }
@@ -134,29 +136,29 @@ export const decode = (instruction: string) => {
     // R-type instructions
     const RType = (instruction:string, type:number) => {
         
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get rd
-        let getRD: number = (new_num >> 7) & 0x1F; // 0x1F = 0b11111
+        const getRD: number = (new_num >> 7) & 0x1F; // 0x1F = 0b11111
 
         // Get funct3
-        let getfunct3: number = (new_num >> 12) & 0x7; // 0x7 = 0b111
+        const getfunct3: number = (new_num >> 12) & 0x7; // 0x7 = 0b111
 
         // Get rs1
-        let getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
+        const getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
 
         // Get rs2
-        let getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
+        const getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
 
         // Get funct7
-        let getfunct7: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
+        const getfunct7: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
 
         // Get register name and instruction
-        let rd:string = determineRegister(getRD);
-        let translatedInstruction:string = determineInstruct(getfunct3, type, getfunct7);
-        let rs1:string = determineRegister(getrs1);
-        let rs2:string = determineRegister(getrs2);
+        const rd:string = determineRegister(getRD);
+        const translatedInstruction:string = determineInstruct(getfunct3, type, getfunct7);
+        const rs1:string = determineRegister(getrs1);
+        const rs2:string = determineRegister(getrs2);
 
 
         temp = translatedInstruction + " " + rd + ", " + rs1 + ", " + rs2;
@@ -168,20 +170,20 @@ export const decode = (instruction: string) => {
     // I-Type Arithmetic instruction
     const ITypeArithmetic = (instruction:string, type:number) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get rd
-        let getRD: number = (new_num >> 7) & 0x1F;
+        const getRD: number = (new_num >> 7) & 0x1F;
 
         // Get funct3
-        let getfunct3: number = (new_num >> 12) & 0x7;
+        const getfunct3: number = (new_num >> 12) & 0x7;
 
         // Get rs1
-        let getrs1: number = (new_num >> 15) & 0x1F;
+        const getrs1: number = (new_num >> 15) & 0x1F;
 
         // Get sign bit of immediate
-        let signbit: number = (new_num >> 31) & 1;
+        const signbit: number = (new_num >> 31) & 1;
 
         // Get immediate (default extraction)
         let getimm: number = (new_num >> 20) & 0xFFF;
@@ -198,10 +200,10 @@ export const decode = (instruction: string) => {
             getimm = getimm | ~0xFFF; // Sign-extend 12-bit immediate to 32-bit
         }
                 
-        let rd:string = determineRegister(getRD);
-        let translatedInstruction:string = determineInstruct(getfunct3, type, funct7);
-        let rs1:string = determineRegister(getrs1);
-        let imm:string = getimm.toString();
+        const rd:string = determineRegister(getRD);
+        const translatedInstruction:string = determineInstruct(getfunct3, type, funct7);
+        const rs1:string = determineRegister(getrs1);
+        const imm:string = getimm.toString();
 
         
 
@@ -213,7 +215,7 @@ export const decode = (instruction: string) => {
     // I-Type Load instruction
     const ITypeLoad = (instruction:string, type:number) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get rd
@@ -240,10 +242,10 @@ export const decode = (instruction: string) => {
             getimm = getimm | ~0xFFF; // Sign-extend the 12-bit immediate to a full 32-bit integer
         }
 
-        let rd:string = determineRegister(getRD);
-        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
-        let rs1:string = determineRegister(getrs1);
-        let imm:string = getimm.toString();
+        const rd:string = determineRegister(getRD);
+        const translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        const rs1:string = determineRegister(getrs1);
+        const imm:string = getimm.toString();
 
 
         temp = translatedInstruction + " " + rd + ", " + imm + "(" + rs1 + ")";
@@ -254,7 +256,7 @@ export const decode = (instruction: string) => {
     // I-Type Jump instruction
     const ITypeJump = (instruction:string, type:number) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get rd
@@ -270,7 +272,7 @@ export const decode = (instruction: string) => {
         getrs1 = getrs1 & 0x1F;
 
         // Get sign bit of immediate
-        let signbit:number = (new_num >> 31) & 1;
+        const signbit:number = (new_num >> 31) & 1;
 
         // Get immediate
         let getimm:number = new_num >> 20;
@@ -282,10 +284,10 @@ export const decode = (instruction: string) => {
             getimm -= 1
         }
 
-        let rd:string = determineRegister(getRD);
-        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
-        let rs1:string = determineRegister(getrs1);
-        let imm:string = getimm.toString();
+        const rd:string = determineRegister(getRD);
+        const translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        const rs1:string = determineRegister(getrs1);
+        const imm:string = getimm.toString();
 
         temp = translatedInstruction + " " + rd + ", " + imm + "(" + rs1 + ")";
         return temp;
@@ -294,21 +296,21 @@ export const decode = (instruction: string) => {
     // System instructions
     const SysInstructions = (instruction:string, type:number) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
 
         // Get funct3
-        let getfunct3: number = (new_num >> 12) & 0x7;
+        const getfunct3: number = (new_num >> 12) & 0x7;
 
         // Get rs1
-        let getrs1: number = (new_num >> 15) & 0x1F;
+        const getrs1: number = (new_num >> 15) & 0x1F;
 
         // Get rd
-        let getRD: number = (new_num >> 7) & 0x1F;
+        const getRD: number = (new_num >> 7) & 0x1F;
 
         // Get immediate (imm[11:0])
-        let getimm: number = (new_num >> 20) & 0xFFF;
+        const getimm: number = (new_num >> 20) & 0xFFF;
 
         // **Special Case: ECALL and EBREAK (funct3 = 000)**
         if (getfunct3 === 0b000) {
@@ -319,16 +321,16 @@ export const decode = (instruction: string) => {
             }
         }
 
-        let rd:string = determineRegister(getRD);
-        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
-        let csr:string = determineRegister(getimm);
+        const rd:string = determineRegister(getRD);
+        const translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        const csr:string = determineRegister(getimm);
 
         if (getfunct3 == 5 || getfunct3 == 6 || getfunct3 == 7) {
             temp = translatedInstruction + " " + rd + ", " + csr + ", " + getrs1
         }
 
         else {
-            let rs1:string = determineRegister(getrs1);
+            const rs1:string = determineRegister(getrs1);
             temp = translatedInstruction + " " + rd + ", " + csr + ", " + rs1 
         }
 
@@ -338,29 +340,29 @@ export const decode = (instruction: string) => {
     // S-type Store instruction
     const STypeStore = (instruction:string, type:number) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get imm[4:0]
-        let firstimm:number = (new_num >> 7) & 0x1F;
+        const firstimm:number = (new_num >> 7) & 0x1F;
 
         // Get funct3
-        let getfunct3:number = (new_num >> 12)  & 0x7;
+        const getfunct3:number = (new_num >> 12)  & 0x7;
 
         // Get rs1
-        let getrs1: number = (new_num >> 15) & 0x1F; 
+        const getrs1: number = (new_num >> 15) & 0x1F; 
 
         // Get rs2
-        let getrs2: number = (new_num >> 20) & 0x1F; 
+        const getrs2: number = (new_num >> 20) & 0x1F; 
         
         // Get imm[11:5]
-        let secondimm: number = (new_num >> 25) & 0x7F; 
+        const secondimm: number = (new_num >> 25) & 0x7F; 
         
         // Combine immediate
         let combinedImm: number = (secondimm << 5) | firstimm;
 
         // Get sign bit of immediate
-        let signbit:number = (new_num >> 31) & 1;
+        const signbit:number = (new_num >> 31) & 1;
 
         // Handle negative values
         if (signbit === 1) {
@@ -369,9 +371,9 @@ export const decode = (instruction: string) => {
         }
 
         // Get register name and instruction
-        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
-        let rs1:string = determineRegister(getrs1);
-        let rs2:string = determineRegister(getrs2);
+        const translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        const rs1:string = determineRegister(getrs1);
+        const rs2:string = determineRegister(getrs2);
         
         temp = translatedInstruction + " " + rs2 + ", " + combinedImm + "(" + rs1 + ")";
         return temp;
@@ -380,29 +382,29 @@ export const decode = (instruction: string) => {
     // Branch instruction
     const SBType = (instruction:string, type:number) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get imm[4:0]
-        let firstimm:number = (new_num >> 7) & 0x1F;
+        const firstimm:number = (new_num >> 7) & 0x1F;
 
         // Get funct3
-        let getfunct3:number = (new_num >> 12)  & 0x7;
+        const getfunct3:number = (new_num >> 12)  & 0x7;
 
         // Get rs1
-        let getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
+        const getrs1: number = (new_num >> 15) & 0x1F; // 0x1F = 0b11111
 
         // Get rs2
-        let getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
+        const getrs2: number = (new_num >> 20) & 0x1F; // 0x1F = 0b11111
         
         // Get imm[11:5]
-        let secondimm: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
+        const secondimm: number = (new_num >> 25) & 0x7F; // 0x7F = 0b01111111
         
         // Combine immediate
         let combinedImm: number = (secondimm << 5) | firstimm;
 
         // Get sign bit of immediate
-        let signbit:number = (new_num >> 31) & 1;
+        const signbit:number = (new_num >> 31) & 1;
 
         // Handle negative values
         if (signbit === 1) {
@@ -411,9 +413,9 @@ export const decode = (instruction: string) => {
         }
         
         // Get register name and instruction
-        let translatedInstruction:string = determineInstruct(getfunct3, type, 0);
-        let rs1:string = determineRegister(getrs1);
-        let rs2:string = determineRegister(getrs2);
+        const translatedInstruction:string = determineInstruct(getfunct3, type, 0);
+        const rs1:string = determineRegister(getrs1);
+        const rs2:string = determineRegister(getrs2);
         
         
         temp = translatedInstruction + " " + rs1 + ", " + rs2 + ", " + combinedImm;
@@ -423,7 +425,7 @@ export const decode = (instruction: string) => {
     // U-Type Load Upper Immediate (LUI)
     const UTypeLUI = (instruction:string) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get rd
@@ -433,7 +435,7 @@ export const decode = (instruction: string) => {
         let imm: number = (new_num >> 12) & 0xFFFFF
 
         // Get sign bit of immediate
-        let signbit:number = (new_num >> 31) & 1;
+        const signbit:number = (new_num >> 31) & 1;
 
         // Handle negative values
         if (signbit === 1) {
@@ -442,7 +444,7 @@ export const decode = (instruction: string) => {
         }
         
 
-        let rd:string = determineRegister(getRD);
+        const rd:string = determineRegister(getRD);
 
         temp = "lui " + rd + ", " + imm;
         return temp;
@@ -451,7 +453,7 @@ export const decode = (instruction: string) => {
     // U-type Add Upper Immediate to PC
     const UTypeAUPIC = (instruction:string) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
 
         // Get rd
@@ -461,7 +463,7 @@ export const decode = (instruction: string) => {
         let imm: number = (new_num >> 12) & 0xFFFFF
 
         // Get sign bit of immediate
-        let signbit:number = (new_num >> 31) & 1;
+        const signbit:number = (new_num >> 31) & 1;
 
         // Handle negative values
         if (signbit === 1) {
@@ -469,7 +471,7 @@ export const decode = (instruction: string) => {
             imm -= 1
         }
                 
-        let rd:string = determineRegister(getRD);
+        const rd:string = determineRegister(getRD);
 
         temp = "auipc " + rd + ", " + imm;
         return temp;
@@ -478,17 +480,17 @@ export const decode = (instruction: string) => {
     // Jump and Link instruction
     const JType = (instruction:string) => {
 
-        let new_num = +instruction;
+        const new_num = +instruction;
         let temp: string = "";
         
         // Get rd
-        let getRD: number = (new_num >> 7) & 0x1F; // Bits 11-7
+        const getRD: number = (new_num >> 7) & 0x1F; // Bits 11-7
         
         // Correctly extract UJ-type immediate
-        let signbit = (new_num >> 31) & 1;  
-        let imm_10_1 = (new_num >> 21) & 0x3FF; 
-        let imm_11 = (new_num >> 20) & 0x1; 
-        let imm_19_12 = (new_num >> 12) & 0xFF; 
+        const signbit = (new_num >> 31) & 1;  
+        const imm_10_1 = (new_num >> 21) & 0x3FF; 
+        const imm_11 = (new_num >> 20) & 0x1; 
+        const imm_19_12 = (new_num >> 12) & 0xFF; 
         
         // Assemble the full 21-bit immediate
         let combinedImm: number = (signbit << 20) | (imm_19_12 << 12) | (imm_11 << 11) | (imm_10_1 << 1);
@@ -499,7 +501,7 @@ export const decode = (instruction: string) => {
             combinedImm -= 1
         }
         
-        let rd: string = determineRegister(getRD);
+        const rd: string = determineRegister(getRD);
         temp = "jal " + rd + ", " + combinedImm;
         return temp;
 
@@ -538,8 +540,8 @@ export const decode = (instruction: string) => {
 // Logic to convert a 32-bit RISC-V Instruction into it's encoded hexadecimal number
 export const encode = (assembly: string) => {
 
-    let splitInstruction: string[] = assembly.trim().split(" ");
-    let getValues = findInstruction(splitInstruction[0]);
+    const splitInstruction: string[] = assembly.trim().split(" ");
+    const getValues = findInstruction(splitInstruction[0]);
     let encodedHex:string = "Invalid RISC-V instruction"
 
     // Encoding time
@@ -549,15 +551,15 @@ export const encode = (assembly: string) => {
         case "R-Type": {
 
             // Extract values from most significant bit to least significant bit
-            let funct7:any = getValues[2]
-            let rs2:number = findRegister(splitInstruction[3])
-            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
-            let funct3:any = getValues[1]
-            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
-            let opcode:any = getValues[0]
+            const funct7:any = getValues[2]
+            const rs2:number = findRegister(splitInstruction[3])
+            const rs1:number = findRegister(splitInstruction[2].slice(0, -1))
+            const funct3:any = getValues[1]
+            const rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            const opcode:any = getValues[0]
                         
             // Forms the equivalent hex number, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-            let formHex = ((funct7 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode).toString(16).padStart(8, '0')
+            const formHex = ((funct7 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break
         }
@@ -568,12 +570,12 @@ export const encode = (assembly: string) => {
             // I-type arithmetic instructions
             if (getValues[0] == 0b0010011) {
 
-               // Extract values from most significant bit to least significant bit
+                // Extract values from most significant bit to least significant bit
                 let imm: number = parseInt(splitInstruction[3]);
-                let rs1: number = findRegister(splitInstruction[2].slice(0, -1));
-                let funct3: any = getValues[1];
-                let rd: number = findRegister(splitInstruction[1].slice(0, -1));
-                let opcode: any = getValues[0];
+                const rs1: number = findRegister(splitInstruction[2].slice(0, -1));
+                const funct3: any = getValues[1];
+                const rd: number = findRegister(splitInstruction[1].slice(0, -1));
+                const opcode: any = getValues[0];
 
                 let funct7: number = 0; // Default funct7
 
@@ -590,7 +592,7 @@ export const encode = (assembly: string) => {
 
                 
                 // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-                let formHex: string = (((funct7 << 25) | (imm << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode) >>> 0 )
+                const formHex: string = (((funct7 << 25) | (imm << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode) >>> 0 )
                     .toString(16)
                     .padStart(8, '0');
                 encodedHex = "0x" + formHex;
@@ -615,11 +617,11 @@ export const encode = (assembly: string) => {
                 else {
                     
                     // CSR Instructions (csrrw, csrrs, csrrc)
-                    let rd:number = findRegister(splitInstruction[1].slice(0, -1));
-                    let csr:number = findRegister(splitInstruction[2].slice(0, -1));
-                    let rs1:number = findRegister(splitInstruction[3])
+                    const rd:number = findRegister(splitInstruction[1].slice(0, -1));
+                    const csr:number = findRegister(splitInstruction[2].slice(0, -1));
+                    const rs1:number = findRegister(splitInstruction[3])
                     let funct3;
-                    let opcode:number = getValues[0]
+                    const opcode:number = getValues[0]
                     
                     if (splitInstruction[0] == "csrrw") {
                         funct3 = 0b001;
@@ -633,7 +635,7 @@ export const encode = (assembly: string) => {
 
                     
                     // Encode instruction
-                    let formHex = (((csr << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode) >>> 0)
+                    const formHex = (((csr << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode) >>> 0)
                         .toString(16)
                         .padStart(8, '0');
                     
@@ -647,14 +649,29 @@ export const encode = (assembly: string) => {
             // I-type load instructions and jump (jalr)
             else {
 
-                let seperate:any = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
-                let imm:number = parseInt(seperate[1]);
-                let rs1:number = findRegister(seperate[2])
-                let funct3:any = getValues[1]
-                let rd:number = findRegister(splitInstruction[1].slice(0, -1))
-                let opcode:any = getValues[0]
+                let seperate: any;
 
-                let formHex: string = (((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode) >>> 0 ).toString(16).padStart(8, '0')
+                try {
+                    seperate = splitInstruction[2].match(/(-?\d+)\((\w+)\)/);
+                } catch (e) {
+                    console.error("Error in regex match:", e);
+                }
+                
+                // Ensure `seperate` is not null before accessing its elements
+                if (seperate) {
+                    let imm: number = parseInt(seperate[1]);
+                    const rs1: number = findRegister(seperate[2]);
+                } else {
+                    console.error("Invalid instruction format:", splitInstruction[2]);
+                }
+    
+                const imm:number = parseInt(seperate[1]);
+                const rs1:number = findRegister(seperate[2])
+                const funct3:any = getValues[1]
+                const rd:number = findRegister(splitInstruction[1].slice(0, -1))
+                const opcode:any = getValues[0]
+
+                const formHex: string = (((imm << 20) | (rs1 << 15) |  (funct3 << 12) |  (rd << 7) | opcode) >>> 0 ).toString(16).padStart(8, '0')
                 encodedHex = "0x" + formHex
                 break
             }
@@ -663,37 +680,44 @@ export const encode = (assembly: string) => {
         // S-type instruction
         case "S-Type": {
 
-            let seperate:any = 0;
+            let seperate: any;
+            let imm:number = 0
+            let rs1:number = 0
 
             try {
-                seperate = splitInstruction[2].match(/(-?\d+)\((\w+)\)/)
+                seperate = splitInstruction[2].match(/(-?\d+)\((\w+)\)/);
+            } catch (e) {
+                console.error("Error in regex match:", e);
             }
-
-            catch(e) {
-                break
+            
+            // Ensure `seperate` is not null before accessing its elements
+            if (seperate) {
+                imm = parseInt(seperate[1]);
+                rs1 = findRegister(seperate[2]);
+            } else {
+                console.error("Invalid instruction format:", splitInstruction[2]);
             }
 
 
             // Extract values from most significant bit to least significant bit
-            let imm:number = parseInt(seperate[1]);
-            let rs1:number = findRegister(seperate[2])
-            let rs2:number = findRegister(splitInstruction[1].slice(0, -1));
-            let funct3:any = getValues[1]
-            let opcode:any = getValues[0]
+            const rs2:number = findRegister(splitInstruction[1].slice(0, -1));
+            const funct3:any = getValues[1]
+            const opcode:any = getValues[0]
 
-            // Split immediate
-            let highImm = (imm >> 5) & 0b1111111;
-            let lowImm = imm & 0b11111
 
-            
             // Sign-extend the immediate (assuming it's 12-bit)
             imm = imm & 0xFFF; // Mask to 12 bits
             if (imm & 0x800) {  // If the 12th bit is set, extend the sign
                 imm |= 0xFFFFF000; // Extend to 32 bits
             }
 
+            // Split immediate
+            const highImm = (imm >> 5) & 0b1111111;
+            const lowImm = imm & 0b11111
+            
+
             // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-            let formHex: string = (((highImm << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
+            const formHex: string = (((highImm << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
         }
@@ -702,10 +726,10 @@ export const encode = (assembly: string) => {
         case "SB-Type": {
 
             let imm:number = parseInt(splitInstruction[3])
-            let rs1:number = findRegister(splitInstruction[2].slice(0, -1))
-            let funct3:any = getValues[1]
-            let rs2:number = findRegister(splitInstruction[1].slice(0, -1))
-            let opcode:any = getValues[0]
+            const rs1:number = findRegister(splitInstruction[2].slice(0, -1))
+            const funct3:any = getValues[1]
+            const rs2:number = findRegister(splitInstruction[1].slice(0, -1))
+            const opcode:any = getValues[0]
 
             
             imm = imm & 0xFFF; // Mask to 12 bits
@@ -718,18 +742,18 @@ export const encode = (assembly: string) => {
             let lowImm = imm & 0b11111
             
             // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
-            let formHex: string = (((highImm << 25) | (rs1 << 20) | (rs2 << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
+            const formHex: string = (((highImm << 25) | (rs1 << 20) | (rs2 << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break;
         }
 
         // U-type instructions
         case "U-Type": {
-            let imm:number = parseInt(splitInstruction[2])
-            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
-            let opcode:any = getValues[0]
+            const imm:number = parseInt(splitInstruction[2])
+            const rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            const opcode:any = getValues[0]
 
-            let formHex:string = ((imm << 12) | (rd << 7) | opcode).toString(16).padStart(8, '0')
+            const formHex:string = ((imm << 12) | (rd << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex
             break
         }
@@ -737,17 +761,17 @@ export const encode = (assembly: string) => {
         // Jump and link (JAL) instructions
         case "UJ-Type": {
             
-            let imm:number = parseInt(splitInstruction[2])
-            let rd:number = findRegister(splitInstruction[1].slice(0, -1))
-            let opcode:any = getValues[0]
+            const imm:number = parseInt(splitInstruction[2])
+            const rd:number = findRegister(splitInstruction[1].slice(0, -1))
+            const opcode:any = getValues[0]
  
             // Extract immediate into it's different parts
-            let imm20 = (imm >> 20) & 0b1;        
-            let imm10_1 = (imm >> 1) & 0b1111111111; 
-            let imm11 = (imm >> 11) & 0b1;       
-            let imm19_12 = (imm >> 12) & 0b11111111; 
+            const imm20 = (imm >> 20) & 0b1;        
+            const imm10_1 = (imm >> 1) & 0b1111111111; 
+            const imm11 = (imm >> 11) & 0b1;       
+            const imm19_12 = (imm >> 12) & 0b11111111; 
 
-            let formHex:string = ((imm20 << 31) | (imm10_1 << 21) | (imm11 << 20) | (imm19_12 << 12) |(rd << 7) | opcode).toString(16).padStart(8, '0')
+            const formHex:string = ((imm20 << 31) | (imm10_1 << 21) | (imm11 << 20) | (imm19_12 << 12) |(rd << 7) | opcode).toString(16).padStart(8, '0')
             encodedHex = "0x" + formHex;
             break
         }
