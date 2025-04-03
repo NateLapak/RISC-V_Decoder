@@ -231,7 +231,7 @@ export const decode = (instruction: string) => {
         getrs1 = getrs1 & 0x1F;
 
         // Get sign bit of immediate
-        let signbit:number = (new_num >> 31) & 1;
+        const signbit:number = (new_num >> 31) & 1;
 
         // Get immediate
         let getimm:number = new_num >> 20;
@@ -650,6 +650,8 @@ export const encode = (assembly: string) => {
             else {
 
                 let seperate: any;
+                let imm:number = 0
+                let rs1:number = 0
 
                 try {
                     seperate = splitInstruction[2].match(/(-?\d+)\((\w+)\)/);
@@ -659,14 +661,12 @@ export const encode = (assembly: string) => {
                 
                 // Ensure `seperate` is not null before accessing its elements
                 if (seperate) {
-                    let imm: number = parseInt(seperate[1]);
-                    const rs1: number = findRegister(seperate[2]);
+                    imm = parseInt(seperate[1]);
+                    rs1= findRegister(seperate[2]);
                 } else {
                     console.error("Invalid instruction format:", splitInstruction[2]);
                 }
     
-                const imm:number = parseInt(seperate[1]);
-                const rs1:number = findRegister(seperate[2])
                 const funct3:any = getValues[1]
                 const rd:number = findRegister(splitInstruction[1].slice(0, -1))
                 const opcode:any = getValues[0]
@@ -738,8 +738,8 @@ export const encode = (assembly: string) => {
             }
 
             // Split immediate
-            let highImm = (imm >> 5) & 0b1111111;
-            let lowImm = imm & 0b11111
+            const highImm = (imm >> 5) & 0b1111111;
+            const lowImm = imm & 0b11111
             
             // Combine all parts to form hexadecimal representation, convert it to hexadecimal and ensure 8 hexadecimal characters are printed.
             const formHex: string = (((highImm << 25) | (rs1 << 20) | (rs2 << 15) | (funct3 << 12) | (lowImm << 7) | opcode) >>> 0).toString(16).padStart(8, '0')
