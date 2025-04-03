@@ -19,12 +19,12 @@ const Home = () => {
 
         if (mode === "decode") {
             const output = decode(instruction); // Decode instruction
-            setResult(output[0]);
-            setInstructionType(output[1]);
+            setResult(output[0] ? String(output[0]) : "");  // Convert to string or use a fallback
+            setInstructionType(output[1] ? String(output[1]) : ""); 
         } else if (mode === "encode") {
             const output = encode(instruction); // Encode RISC-V assembly
-            setResult(output[0]);
-            setInstructionType(output[1])
+            setResult(output[0] ? String(output[0]) : "");  // Convert to string or use a fallback
+            setInstructionType(output[1] ? String(output[1]) : ""); 
         }
 
     };
