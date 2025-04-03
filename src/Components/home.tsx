@@ -53,7 +53,7 @@ const Home = () => {
     ]
     
     return (
-        <div className="container-fluid py-4">
+        <div className="container-fluid py-4 m-5">
             <div className="homepage my-8">
                 <h2>RISC-V Instruction {mode === "decode" ? "Decoder" : "Encoder"}</h2>
                 <p>

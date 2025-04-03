@@ -11,7 +11,7 @@ const Header = () => {
             href="https://www.cs.sfu.ca/~ashriram/Courses/CS295/assets/notebooks/RISCV/RISCV_CARD.pdf"
             className="text-white hover:underline"
           >
-            RISC-V Open-Source Reference Sheet   
+            RISC-V Open Source Reference Sheet   
           </a>
         </h1>
       </div>
